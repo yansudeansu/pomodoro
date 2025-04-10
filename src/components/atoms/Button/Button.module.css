@@ -1,0 +1,37 @@
+.button {
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.button:hover:enabled {
+  background-color: #e84343;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.default {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.large {
+  padding: 0.9rem 2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.active {
+  background-color: #5a1e1e;
+  color: #fff;
+  font-weight: 600;
+  border: 2px solid #ff4d4d;
+}

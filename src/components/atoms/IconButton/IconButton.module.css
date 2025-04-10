@@ -1,0 +1,31 @@
+.button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.7;
+}
+
+.small {
+  font-size: 0.9rem;
+}
+
+.medium {
+  font-size: 1.1rem;
+}
+
+.danger {
+  color: #ff4d4d;
+}
+
+.success {
+  color: #4dff5f;
+}

@@ -1,0 +1,27 @@
+.text {
+  color: #f0f0f0;
+  font-family: "Inter", sans-serif;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.label {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.timer {
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.body {
+  font-size: 1rem;
+}
