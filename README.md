@@ -1,7 +1,7 @@
 # Pomodoro Timer
 
-A minimalist and focused Pomodoro timer with task tracking, built using React and modern best practices.  
-Designed to help you stay productive with the Pomodoro technique — work in focused 25-minute blocks, take breaks, and keep track of tasks and time spent.
+A minimalist and focused time management tool with task tracking, built using React and modern best practices.
+Designed to help you stay productive with a time-based approach — work in focused 25-minute intervals, take breaks, and keep track of tasks and time spent.
 
 ---
 
