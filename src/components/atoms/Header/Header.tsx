@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "../../atoms/Link/Link";
-import styles from "./Header.module.css";
+import React from 'react'
+import { Link } from '../../atoms/Link/Link'
+import styles from './Header.module.css'
 
 export const Header: React.FC = () => (
   <header className={styles.header}>
@@ -13,4 +13,4 @@ export const Header: React.FC = () => (
       GitHub
     </Link>
   </header>
-);
+)

@@ -1,98 +1,152 @@
-import { describe, it, vi, beforeEach, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { TimerControls } from "./TimerControls";
-import { usePomodoroContext } from "../../../context/PomodoroContext";
-import { playStartSound } from "../../../utils/sound";
+import { describe, it, vi, beforeEach, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { TimerControls } from './TimerControls'
+import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext'
+import { playStartSound } from '../../../utils/sound'
 
-vi.mock("../../../context/PomodoroContext", async () => {
-  const actual = await vi.importActual("../../../context/PomodoroContext");
+vi.mock('../../../context/PomodoroContext', async () => {
+  const actual = await vi.importActual<typeof import('../../../context/PomodoroContext')>(
+    '../../../context/PomodoroContext'
+  )
   return {
     ...actual,
     usePomodoroContext: vi.fn(),
-  };
-});
+  }
+})
 
-vi.mock("../../../utils/sound", () => ({
+vi.mock('../../../utils/sound', () => ({
   playStartSound: vi.fn(),
-}));
+}))
 
-const mockSetIsRunning = vi.fn();
-const mockSetActiveTaskId = vi.fn();
+const mockSetIsRunning = vi.fn()
+const mockSetActiveTaskId = vi.fn()
+
+const mockedUsePomodoroContext = vi.mocked(usePomodoroContext)
+
+const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroContextType => ({
+  mode: 'pomodoro',
+  setMode: vi.fn(),
+  isRunning: false,
+  setIsRunning: vi.fn(),
+  timeLeft: 1500,
+  setTimeLeft: vi.fn(),
+  resetTimer: vi.fn(),
+  tasks: [],
+  setTasks: vi.fn(),
+  pomodoroCount: 0,
+  setPomodoroCount: vi.fn(),
+  activeTaskId: null,
+  setActiveTaskId: vi.fn(),
+  incrementCompletedPomodoros: vi.fn(),
+  ...overrides,
+})
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.clearAllMocks()
 
-  vi.mocked(usePomodoroContext).mockReturnValue({
-    isRunning: false,
-    setIsRunning: mockSetIsRunning,
-    setActiveTaskId: mockSetActiveTaskId,
-    tasks: [],
-  } as any);
-});
-
-describe("TimerControls", () => {
-  it("renders Start when not running", () => {
-    render(<TimerControls />);
-    expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
-  });
-
-  it("renders Pause when running", () => {
-    vi.mocked(usePomodoroContext).mockReturnValue({
-      isRunning: true,
+  mockedUsePomodoroContext.mockReturnValue(
+    createMockContext({
+      isRunning: false,
       setIsRunning: mockSetIsRunning,
       setActiveTaskId: mockSetActiveTaskId,
       tasks: [],
-    } as any);
+    })
+  )
+})
 
-    render(<TimerControls />);
-    expect(screen.getByRole("button", { name: /pause/i })).toBeInTheDocument();
-  });
+describe('TimerControls', () => {
+  it('renders Start when not running', () => {
+    render(<TimerControls />)
+    expect(screen.getByRole('button', { name: /start/i })).toBeInTheDocument()
+  })
 
-  it("calls playStartSound and starts timer", async () => {
-    const user = userEvent.setup();
-    render(<TimerControls />);
-    await user.click(screen.getByRole("button"));
+  it('renders Pause when running', () => {
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        isRunning: true,
+        setIsRunning: mockSetIsRunning,
+        setActiveTaskId: mockSetActiveTaskId,
+        tasks: [],
+      })
+    )
 
-    expect(playStartSound).toHaveBeenCalled();
-    expect(mockSetIsRunning).toHaveBeenCalledWith(true);
-  });
+    render(<TimerControls />)
+    expect(screen.getByRole('button', { name: /pause/i })).toBeInTheDocument()
+  })
 
-  it("sets first unfinished task as active", async () => {
-    const user = userEvent.setup();
+  it('calls playStartSound and starts timer', async () => {
+    const user = userEvent.setup()
+    render(<TimerControls />)
+    await user.click(screen.getByRole('button'))
 
-    vi.mocked(usePomodoroContext).mockReturnValue({
-      isRunning: false,
-      setIsRunning: mockSetIsRunning,
-      setActiveTaskId: mockSetActiveTaskId,
-      tasks: [
-        { id: "1", pomodoros: 2, completedPomodoros: 2 },
-        { id: "2", pomodoros: 3, completedPomodoros: 1 },
-      ],
-    } as any);
+    expect(playStartSound).toHaveBeenCalled()
+    expect(mockSetIsRunning).toHaveBeenCalledWith(true)
+  })
 
-    render(<TimerControls />);
-    await user.click(screen.getByRole("button"));
+  it('sets first unfinished task as active', async () => {
+    const user = userEvent.setup()
 
-    expect(mockSetActiveTaskId).toHaveBeenCalledWith("2");
-  });
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        isRunning: false,
+        setIsRunning: mockSetIsRunning,
+        setActiveTaskId: mockSetActiveTaskId,
+        tasks: [
+          {
+            id: '1',
+            pomodoros: 2,
+            completedPomodoros: 2,
+            completed: false,
+            title: 'T1',
+          },
+          {
+            id: '2',
+            pomodoros: 3,
+            completedPomodoros: 1,
+            completed: false,
+            title: 'T2',
+          },
+        ],
+      })
+    )
 
-  it("does not set active task if all tasks are complete", async () => {
-    const user = userEvent.setup();
+    render(<TimerControls />)
+    await user.click(screen.getByRole('button'))
 
-    vi.mocked(usePomodoroContext).mockReturnValue({
-      isRunning: false,
-      setIsRunning: mockSetIsRunning,
-      setActiveTaskId: mockSetActiveTaskId,
-      tasks: [
-        { id: "1", pomodoros: 1, completedPomodoros: 1 },
-        { id: "2", pomodoros: 2, completedPomodoros: 2 },
-      ],
-    } as any);
+    expect(mockSetActiveTaskId).toHaveBeenCalledWith('2')
+  })
 
-    render(<TimerControls />);
-    await user.click(screen.getByRole("button"));
+  it('does not set active task if all tasks are complete', async () => {
+    const user = userEvent.setup()
 
-    expect(mockSetActiveTaskId).not.toHaveBeenCalled();
-  });
-});
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        isRunning: false,
+        setIsRunning: mockSetIsRunning,
+        setActiveTaskId: mockSetActiveTaskId,
+        tasks: [
+          {
+            id: '1',
+            pomodoros: 1,
+            completedPomodoros: 1,
+            completed: true,
+            title: 'Done 1',
+          },
+          {
+            id: '2',
+            pomodoros: 2,
+            completedPomodoros: 2,
+            completed: true,
+            title: 'Done 2',
+          },
+        ],
+      })
+    )
+
+    render(<TimerControls />)
+    await user.click(screen.getByRole('button'))
+
+    expect(mockSetActiveTaskId).not.toHaveBeenCalled()
+  })
+})

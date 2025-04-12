@@ -8,7 +8,7 @@ import {
   CalendarDays,
   Split,
   ExternalLink,
-} from "lucide-react";
+} from 'lucide-react'
 
 export const AppIcons = {
   trash: Trash2,
@@ -20,6 +20,6 @@ export const AppIcons = {
   calendar: CalendarDays,
   split: Split,
   link: ExternalLink,
-};
+}
 
-export type IconName = keyof typeof AppIcons;
+export type IconName = keyof typeof AppIcons

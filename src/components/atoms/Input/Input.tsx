@@ -1,12 +1,10 @@
-import React from "react";
-import styles from "./Input.module.css";
+import React from 'react'
+import styles from './Input.module.css'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  className?: string;
+  className?: string
 }
 
-export const Input: React.FC<InputProps> = ({ className = "", ...props }) => {
-  return (
-    <input type="text" className={`${styles.input} ${className}`} {...props} />
-  );
-};
+export const Input: React.FC<InputProps> = ({ className = '', ...props }) => {
+  return <input type="text" className={`${styles.input} ${className}`} {...props} />
+}

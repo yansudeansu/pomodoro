@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { ModeSwitcher } from "./ModeSwitcher";
-import { PomodoroProvider } from "../../../context/PomodoroContext";
+import type { Meta, StoryObj } from '@storybook/react'
+import { ModeSwitcher } from './ModeSwitcher'
+import { PomodoroProvider } from '../../../context/PomodoroContext'
 
 const meta: Meta<typeof ModeSwitcher> = {
-  title: "Molecules/ModeSwitcher",
+  title: 'Molecules/ModeSwitcher',
   component: ModeSwitcher,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <PomodoroProvider>
@@ -17,13 +17,13 @@ const meta: Meta<typeof ModeSwitcher> = {
     docs: {
       description: {
         component:
-          "The `ModeSwitcher` allows users to toggle between Pomodoro, Short Break, and Long Break modes. Active mode is highlighted.",
+          'The `ModeSwitcher` allows users to toggle between Pomodoro, Short Break, and Long Break modes. Active mode is highlighted.',
       },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof ModeSwitcher>;
+export default meta
+type Story = StoryObj<typeof ModeSwitcher>
 
-export const Default: Story = {};
+export const Default: Story = {}

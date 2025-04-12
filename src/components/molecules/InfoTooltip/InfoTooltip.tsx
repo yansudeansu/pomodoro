@@ -1,22 +1,17 @@
-import React, { useState } from "react";
-import styles from "./InfoTooltip.module.css";
-import { AppIcons } from "../../atoms/Icons/Icons";
+import React, { useState } from 'react'
+import styles from './InfoTooltip.module.css'
+import { AppIcons } from '../../atoms/Icons/Icons'
 
 export const InfoTooltip: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const InfoIcon = AppIcons.info;
-  const CheckIcon = AppIcons.sparkle;
-  const CutIcon = AppIcons.trash;
-  const CalendarIcon = AppIcons.add;
-  const BrainIcon = AppIcons.sparkles;
+  const [open, setOpen] = useState(false)
+  const InfoIcon = AppIcons.info
+  const CheckIcon = AppIcons.sparkle
+  const CutIcon = AppIcons.trash
+  const CalendarIcon = AppIcons.add
+  const BrainIcon = AppIcons.sparkles
 
   return (
-    <div
-      className={styles.container}
-      tabIndex={0}
-      onBlur={() => setOpen(false)}
-      onFocus={() => {}}
-    >
+    <div className={styles.container} tabIndex={0} onBlur={() => setOpen(false)} onFocus={() => {}}>
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={styles.iconButton}
@@ -48,5 +43,5 @@ export const InfoTooltip: React.FC = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
