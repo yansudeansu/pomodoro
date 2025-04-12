@@ -14,13 +14,17 @@ beforeEach(() => {
 describe("sound", () => {
   it("plays alarm sound", () => {
     playAlarm();
-    expect(globalThis.Audio).toHaveBeenCalledWith("/alarm.mp3");
+    expect(globalThis.Audio).toHaveBeenCalledWith(
+      "/pomodoro/src/assets/alarm.mp3"
+    );
     expect(playMock).toHaveBeenCalled();
   });
 
   it("plays start sound", () => {
     playStartSound();
-    expect(globalThis.Audio).toHaveBeenCalledWith("/start.mp3");
+    expect(globalThis.Audio).toHaveBeenCalledWith(
+      "/pomodoro/src/assets/start.mp3"
+    );
     expect(playMock).toHaveBeenCalled();
   });
 });
