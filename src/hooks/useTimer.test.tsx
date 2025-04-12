@@ -1,11 +1,8 @@
-import { describe, it, vi, expect, beforeEach, afterEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import {
-  PomodoroProvider,
-  usePomodoroContext,
-} from "../context/PomodoroContext";
-import { useTimer } from "./useTimer";
-import * as sound from "../utils/sound";
+import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { PomodoroProvider, usePomodoroContext } from '../context/PomodoroContext';
+import { calculateRemainingTime, useTimer } from './useTimer';
+import * as sound from '../utils/sound';
 
 vi.useFakeTimers();
 
@@ -13,11 +10,11 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
   <PomodoroProvider>{children}</PomodoroProvider>
 );
 
-describe("useTimer", () => {
+describe('useTimer', () => {
   let alarmSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    alarmSpy = vi.spyOn(sound, "playAlarm").mockImplementation(() => {});
+    alarmSpy = vi.spyOn(sound, 'playAlarm').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -25,7 +22,7 @@ describe("useTimer", () => {
     alarmSpy.mockRestore();
   });
 
-  it("starts and decrements the timer", () => {
+  it('starts and decrements the timer', () => {
     const { result } = renderHook(
       () => {
         useTimer();
@@ -45,7 +42,7 @@ describe("useTimer", () => {
     expect(result.current.timeLeft).toBe(1500 - 3);
   });
 
-  it("plays alarm and switches mode when timer ends", () => {
+  it('plays alarm and switches mode when timer ends', () => {
     const { result } = renderHook(
       () => {
         useTimer();
@@ -64,25 +61,23 @@ describe("useTimer", () => {
 
     expect(alarmSpy).toHaveBeenCalledOnce();
     expect(result.current.isRunning).toBe(false);
-    expect(["short_break", "long_break"]).toContain(result.current.mode);
+    expect(['short_break', 'long_break']).toContain(result.current.mode);
   });
 
-  it("increments pomodoro count and switches to long_break on 4th", async () => {
+  it('increments pomodoro count and switches to long_break on 4th', async () => {
     const { result } = renderHook(
       () => {
         useTimer();
         return usePomodoroContext();
       },
       {
-        wrapper: ({ children }) => (
-          <PomodoroProvider>{children}</PomodoroProvider>
-        ),
+        wrapper: ({ children }) => <PomodoroProvider>{children}</PomodoroProvider>,
       }
     );
 
     const simulatePomodoro = async () => {
       await act(() => {
-        result.current.setMode("pomodoro");
+        result.current.setMode('pomodoro');
         result.current.setIsRunning(true);
       });
 
@@ -101,10 +96,10 @@ describe("useTimer", () => {
     }
 
     expect(result.current.pomodoroCount).toBe(4);
-    expect(result.current.mode).toBe("long_break");
+    expect(result.current.mode).toBe('long_break');
   });
 
-  it("switches back to pomodoro after a break", () => {
+  it('switches back to pomodoro after a break', () => {
     const { result } = renderHook(
       () => {
         useTimer();
@@ -114,7 +109,7 @@ describe("useTimer", () => {
     );
 
     act(() => {
-      result.current.setMode("short_break");
+      result.current.setMode('short_break');
       result.current.setIsRunning(true);
     });
 
@@ -122,11 +117,11 @@ describe("useTimer", () => {
       vi.advanceTimersByTime(5 * 60 * 1000);
     });
 
-    expect(result.current.mode).toBe("pomodoro");
+    expect(result.current.mode).toBe('pomodoro');
   });
 
-  it("clears previous interval when creating a new one (lines 21–23)", async () => {
-    const clearSpy = vi.spyOn(globalThis, "clearInterval");
+  it('clears previous interval when creating a new one (lines 21–23)', async () => {
+    const clearSpy = vi.spyOn(globalThis, 'clearInterval');
 
     const { result } = renderHook(
       () => {
@@ -157,5 +152,18 @@ describe("useTimer", () => {
     expect(clearSpy).toHaveBeenCalled();
 
     clearSpy.mockRestore();
+  });
+
+  it('returns 0 if targetTime is null', () => {
+    const now = Date.now();
+    const result = calculateRemainingTime(null, now);
+    expect(result).toBe(0);
+  });
+
+  it('calculates remaining seconds if targetTime is set', () => {
+    const now = Date.now();
+    const target = now + 5000;
+    const result = calculateRemainingTime(target, now);
+    expect(result).toBe(5);
   });
 });

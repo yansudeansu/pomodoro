@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { Mode, Task } from "../types";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Mode, Task } from '../types';
 
-interface PomodoroContextType {
+export interface PomodoroContextType {
   mode: Mode;
   setMode: (mode: Mode) => void;
   isRunning: boolean;
@@ -18,9 +18,7 @@ interface PomodoroContextType {
   incrementCompletedPomodoros: () => void;
 }
 
-const PomodoroContext = createContext<PomodoroContextType | undefined>(
-  undefined
-);
+const PomodoroContext = createContext<PomodoroContextType | undefined>(undefined);
 
 const MODE_DEFAULTS: Record<Mode, number> = {
   pomodoro: 25 * 60,
@@ -28,21 +26,18 @@ const MODE_DEFAULTS: Record<Mode, number> = {
   long_break: 15 * 60,
 };
 
-const TASKS_STORAGE_KEY = "pomodoro-tasks";
+const TASKS_STORAGE_KEY = 'pomodoro-tasks';
 
-export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [mode, setMode] = useState<Mode>("pomodoro");
+export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [mode, setMode] = useState<Mode>('pomodoro');
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(MODE_DEFAULTS["pomodoro"]);
+  const [timeLeft, setTimeLeft] = useState(MODE_DEFAULTS['pomodoro']);
   const [tasks, setTasks] = useState<Task[]>(() => {
     const stored = localStorage.getItem(TASKS_STORAGE_KEY);
     try {
       return stored ? JSON.parse(stored) : [];
     } catch {
-      console.error("Failed to parse tasks from localStorage"); // not covered
-      return []; // not covered
+      return [];
     }
   });
   const [pomodoroCount, setPomodoroCount] = useState(0);
@@ -98,10 +93,11 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePomodoroContext = () => {
   const context = useContext(PomodoroContext);
   if (!context) {
-    throw new Error("usePomodoroContext must be used within PomodoroProvider");
+    throw new Error('usePomodoroContext must be used within PomodoroProvider');
   }
   return context;
 };
