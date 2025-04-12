@@ -6,7 +6,6 @@ import styles from './TaskList.module.css'
 import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext'
 import { Task } from '../../../types'
 
-// ----- Mock usePomodoroContext
 vi.mock('../../../context/PomodoroContext', async () => {
   const actual = await vi.importActual<typeof import('../../../context/PomodoroContext')>(
     '../../../context/PomodoroContext'
@@ -29,7 +28,6 @@ const mockTasks = [
   },
 ]
 
-// ----- Define full, minimal context mock
 const createMockContext = (overrides: Partial<PomodoroContextType> = {}): PomodoroContextType => ({
   mode: 'pomodoro',
   setMode: vi.fn(),
@@ -50,7 +48,6 @@ const createMockContext = (overrides: Partial<PomodoroContextType> = {}): Pomodo
 
 const mockedUsePomodoroContext = vi.mocked(usePomodoroContext)
 
-// ----- Mock AppIcons
 vi.mock('../../atoms/Icons/Icons', () => {
   const PomodoroIcon = () => <svg data-testid="pomodoro-icon" />
   const DonePomodoroIcon = () => <svg data-testid="done-pomodoro-icon" />
