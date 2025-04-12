@@ -41,8 +41,7 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       return stored ? JSON.parse(stored) : [];
     } catch {
-      console.error("Failed to parse tasks from localStorage"); // not covered
-      return []; // not covered
+      return [];
     }
   });
   const [pomodoroCount, setPomodoroCount] = useState(0);
