@@ -48,4 +48,4 @@ jobs:
         with:
           branch: gh-pages
           folder: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAGES_DEPLOY_TOKEN }}
