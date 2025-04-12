@@ -1,11 +1,11 @@
-import React from 'react'
-import styles from './Checkbox.module.css'
+import React from 'react';
+import styles from './Checkbox.module.css';
 
 interface CheckboxProps {
-  id?: string
-  checked: boolean
-  onChange: () => void
-  mode: 'pomodoro' | 'short_break' | 'long_break'
+  id?: string;
+  checked: boolean;
+  onChange: () => void;
+  mode: 'pomodoro' | 'short_break' | 'long_break';
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({ id, checked, onChange, mode }) => {
@@ -17,5 +17,5 @@ export const Checkbox: React.FC<CheckboxProps> = ({ id, checked, onChange, mode 
       onChange={onChange}
       className={`${styles.checkbox} ${styles[mode]}`}
     />
-  )
-}
+  );
+};

@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
-import { TimerControls } from './TimerControls'
-import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext'
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { TimerControls } from './TimerControls';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
 const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedContext>{children}</MockedContext>
     </PomodoroProvider>
-  )
-}
+  );
+};
 
 const MockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setTasks, setActiveTaskId } = usePomodoroContext()
+  const { setTasks, setActiveTaskId } = usePomodoroContext();
 
   useEffect(() => {
     setTasks([
@@ -23,13 +23,13 @@ const MockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         pomodoros: 2,
         completedPomodoros: 1,
       },
-    ])
+    ]);
 
-    setActiveTaskId(null)
-  }, [setTasks, setActiveTaskId])
+    setActiveTaskId(null);
+  }, [setTasks, setActiveTaskId]);
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof TimerControls> = {
   title: 'Molecules/TimerControls',
@@ -49,9 +49,9 @@ const meta: Meta<typeof TimerControls> = {
       },
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof TimerControls>
+export default meta;
+type Story = StoryObj<typeof TimerControls>;
 
-export const Default: Story = {}
+export const Default: Story = {};

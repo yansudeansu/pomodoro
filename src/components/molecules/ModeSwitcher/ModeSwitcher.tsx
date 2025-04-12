@@ -1,12 +1,12 @@
-import React from 'react'
-import styles from './ModeSwitcher.module.css'
-import { Button } from '../../atoms/Button/Button'
-import { usePomodoroContext } from '../../../context/PomodoroContext'
+import React from 'react';
+import styles from './ModeSwitcher.module.css';
+import { Button } from '../../atoms/Button/Button';
+import { usePomodoroContext } from '../../../context/PomodoroContext';
 
-const modes = ['pomodoro', 'short_break', 'long_break'] as const
+const modes = ['pomodoro', 'short_break', 'long_break'] as const;
 
 export const ModeSwitcher: React.FC = () => {
-  const { mode, setMode } = usePomodoroContext()
+  const { mode, setMode } = usePomodoroContext();
 
   return (
     <div className={styles.container}>
@@ -16,5 +16,5 @@ export const ModeSwitcher: React.FC = () => {
         </Button>
       ))}
     </div>
-  )
-}
+  );
+};

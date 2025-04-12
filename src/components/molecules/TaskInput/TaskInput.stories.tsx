@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
-import { TaskInput } from './TaskInput'
+import { useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { TaskInput } from './TaskInput';
 
 const meta: Meta<typeof TaskInput> = {
   title: 'Molecules/TaskInput',
@@ -25,10 +25,10 @@ const meta: Meta<typeof TaskInput> = {
       description: 'Current mode for styling',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof TaskInput>
+export default meta;
+type Story = StoryObj<typeof TaskInput>;
 
 export const Default: Story = {
   args: {
@@ -37,7 +37,7 @@ export const Default: Story = {
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState('');
 
     return (
       <TaskInput
@@ -46,6 +46,6 @@ export const Default: Story = {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => console.log('Key down:', e.key)}
       />
-    )
+    );
   },
-}
+};

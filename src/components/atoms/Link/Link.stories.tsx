@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Link } from './Link'
+import type { Meta, StoryObj } from '@storybook/react';
+import { Link } from './Link';
 
 const meta: Meta<typeof Link> = {
   title: 'Atoms/Link',
@@ -33,10 +33,10 @@ const meta: Meta<typeof Link> = {
       description: 'If true, shows an external link icon (only for external links)',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Link>
+export default meta;
+type Story = StoryObj<typeof Link>;
 
 export const InternalLink: Story = {
   args: {
@@ -45,7 +45,7 @@ export const InternalLink: Story = {
     external: false,
     showIcon: false,
   },
-}
+};
 
 export const ExternalLink: Story = {
   args: {
@@ -54,7 +54,7 @@ export const ExternalLink: Story = {
     external: true,
     showIcon: true,
   },
-}
+};
 
 export const ExternalNoIcon: Story = {
   args: {
@@ -63,4 +63,4 @@ export const ExternalNoIcon: Story = {
     external: true,
     showIcon: false,
   },
-}
+};

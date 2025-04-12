@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { ModeSwitcher } from './ModeSwitcher'
-import { PomodoroProvider } from '../../../context/PomodoroContext'
+import type { Meta, StoryObj } from '@storybook/react';
+import { ModeSwitcher } from './ModeSwitcher';
+import { PomodoroProvider } from '../../../context/PomodoroContext';
 
 const meta: Meta<typeof ModeSwitcher> = {
   title: 'Molecules/ModeSwitcher',
@@ -21,9 +21,9 @@ const meta: Meta<typeof ModeSwitcher> = {
       },
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof ModeSwitcher>
+export default meta;
+type Story = StoryObj<typeof ModeSwitcher>;
 
-export const Default: Story = {}
+export const Default: Story = {};

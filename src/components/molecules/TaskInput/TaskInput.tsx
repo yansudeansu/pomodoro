@@ -1,14 +1,14 @@
-import React from 'react'
-import { Input } from '../../atoms/Input/Input'
-import styles from './TaskInput.module.css'
+import React from 'react';
+import { Input } from '../../atoms/Input/Input';
+import styles from './TaskInput.module.css';
 
 interface TaskInputProps {
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-  placeholder?: string
-  id?: string
-  mode: 'pomodoro' | 'short_break' | 'long_break'
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  id?: string;
+  mode: 'pomodoro' | 'short_break' | 'long_break';
 }
 
 export const TaskInput: React.FC<TaskInputProps> = ({
@@ -28,5 +28,5 @@ export const TaskInput: React.FC<TaskInputProps> = ({
       placeholder={placeholder}
       className={styles[mode]}
     />
-  )
-}
+  );
+};

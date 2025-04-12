@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { IconButton } from './IconButton'
-import { IconName } from '../Icons/Icons'
+import type { Meta, StoryObj } from '@storybook/react';
+import { IconButton } from './IconButton';
+import { IconName } from '../Icons/Icons';
 
 const meta: Meta<typeof IconButton> = {
   title: 'Atoms/IconButton',
@@ -36,10 +36,10 @@ const meta: Meta<typeof IconButton> = {
     },
     onClick: { action: 'clicked' },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof IconButton>
+export default meta;
+type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = {
   args: {
@@ -48,7 +48,7 @@ export const Default: Story = {
     variant: 'default',
     label: 'Add something',
   },
-}
+};
 
 export const SmallSuccess: Story = {
   args: {
@@ -57,7 +57,7 @@ export const SmallSuccess: Story = {
     variant: 'success',
     label: 'Add task',
   },
-}
+};
 
 export const MediumDanger: Story = {
   args: {
@@ -66,7 +66,7 @@ export const MediumDanger: Story = {
     variant: 'danger',
     label: 'Delete task',
   },
-}
+};
 
 export const InfoIcon: Story = {
   args: {
@@ -75,4 +75,4 @@ export const InfoIcon: Story = {
     variant: 'default',
     label: 'More information',
   },
-}
+};

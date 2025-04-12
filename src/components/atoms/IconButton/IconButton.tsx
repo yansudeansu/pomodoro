@@ -1,12 +1,12 @@
-import { AppIcons, IconName } from '../Icons/Icons'
-import styles from './IconButton.module.css'
+import { AppIcons, IconName } from '../Icons/Icons';
+import styles from './IconButton.module.css';
 
 interface IconButtonProps {
-  icon: IconName
-  onClick: () => void
-  label?: string
-  size?: 'small' | 'medium'
-  variant?: 'default' | 'success' | 'danger'
+  icon: IconName;
+  onClick: () => void;
+  label?: string;
+  size?: 'small' | 'medium';
+  variant?: 'default' | 'success' | 'danger';
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({
@@ -16,7 +16,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   size = 'medium',
   variant = 'default',
 }) => {
-  const Icon = AppIcons[icon]
+  const Icon = AppIcons[icon];
 
   return (
     <button
@@ -26,5 +26,5 @@ export const IconButton: React.FC<IconButtonProps> = ({
     >
       <Icon size={size === 'small' ? 16 : 20} />
     </button>
-  )
-}
+  );
+};

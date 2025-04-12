@@ -1,25 +1,25 @@
-import React from 'react'
-import styles from './TimerControls.module.css'
-import { Button } from '../../atoms/Button/Button'
-import { usePomodoroContext } from '../../../context/PomodoroContext'
-import { playStartSound } from '../../../utils/sound'
+import React from 'react';
+import styles from './TimerControls.module.css';
+import { Button } from '../../atoms/Button/Button';
+import { usePomodoroContext } from '../../../context/PomodoroContext';
+import { playStartSound } from '../../../utils/sound';
 
 export const TimerControls: React.FC = () => {
-  const { isRunning, setIsRunning, tasks, setActiveTaskId } = usePomodoroContext()
+  const { isRunning, setIsRunning, tasks, setActiveTaskId } = usePomodoroContext();
 
   const handleStartPause = () => {
     if (!isRunning) {
-      playStartSound()
+      playStartSound();
 
-      const firstUnfinished = tasks.find((task) => task.completedPomodoros < task.pomodoros)
+      const firstUnfinished = tasks.find((task) => task.completedPomodoros < task.pomodoros);
 
       if (firstUnfinished) {
-        setActiveTaskId(firstUnfinished.id)
+        setActiveTaskId(firstUnfinished.id);
       }
     }
 
-    setIsRunning(!isRunning)
-  }
+    setIsRunning(!isRunning);
+  };
 
   return (
     <div className={styles.container}>
@@ -27,5 +27,5 @@ export const TimerControls: React.FC = () => {
         {isRunning ? 'Pause' : 'Start'}
       </Button>
     </div>
-  )
-}
+  );
+};

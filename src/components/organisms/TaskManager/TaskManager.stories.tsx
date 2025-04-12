@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
-import { TaskManager } from './TaskManager'
-import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext'
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { TaskManager } from './TaskManager';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
 const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedValues>{children}</MockedValues>
     </PomodoroProvider>
-  )
-}
+  );
+};
 
 const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setTasks } = usePomodoroContext()
+  const { setTasks } = usePomodoroContext();
 
   useEffect(() => {
     const defaultTasks = [
@@ -30,13 +30,13 @@ const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         pomodoros: 1,
         completedPomodoros: 0,
       },
-    ]
+    ];
 
-    setTasks(defaultTasks)
-  }, [setTasks])
+    setTasks(defaultTasks);
+  }, [setTasks]);
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof TaskManager> = {
   title: 'Organisms/TaskManager',
@@ -56,11 +56,11 @@ const meta: Meta<typeof TaskManager> = {
       },
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof TaskManager>
+export default meta;
+type Story = StoryObj<typeof TaskManager>;
 
 export const Default: Story = {
   args: {},
-}
+};

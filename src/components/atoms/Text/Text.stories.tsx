@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Text } from './Text'
+import type { Meta, StoryObj } from '@storybook/react';
+import { Text } from './Text';
 
 const meta: Meta<typeof Text> = {
   title: 'Atoms/Text',
@@ -25,35 +25,35 @@ const meta: Meta<typeof Text> = {
       defaultValue: 'This is a text component',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Text>
+export default meta;
+type Story = StoryObj<typeof Text>;
 
 export const Heading: Story = {
   args: {
     variant: 'heading',
     children: 'Heading Text',
   },
-}
+};
 
 export const Label: Story = {
   args: {
     variant: 'label',
     children: 'Label Text',
   },
-}
+};
 
 export const Timer: Story = {
   args: {
     variant: 'timer',
     children: '25:00',
   },
-}
+};
 
 export const Body: Story = {
   args: {
     variant: 'body',
     children: 'This is body text used for normal content.',
   },
-}
+};

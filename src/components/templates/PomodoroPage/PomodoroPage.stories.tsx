@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
-import { PomodoroPage } from './PomodoroPage'
-import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext'
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { PomodoroPage } from './PomodoroPage';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
 const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedValues>{children}</MockedValues>
     </PomodoroProvider>
-  )
-}
+  );
+};
 
 const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setTasks, setMode } = usePomodoroContext()
+  const { setTasks, setMode } = usePomodoroContext();
 
   useEffect(() => {
     const defaultTasks = [
@@ -30,15 +30,15 @@ const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         pomodoros: 1,
         completedPomodoros: 0,
       },
-    ]
+    ];
 
-    setTasks(defaultTasks)
-    setMode('pomodoro')
+    setTasks(defaultTasks);
+    setMode('pomodoro');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof PomodoroPage> = {
   title: 'Pages/PomodoroPage',
@@ -58,11 +58,11 @@ const meta: Meta<typeof PomodoroPage> = {
       },
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof PomodoroPage>
+export default meta;
+type Story = StoryObj<typeof PomodoroPage>;
 
 export const Default: Story = {
   args: {},
-}
+};

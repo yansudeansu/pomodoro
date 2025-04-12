@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
-import { TaskList } from './TaskList'
-import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext'
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { TaskList } from './TaskList';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
 const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedTasksInjector>{children}</MockedTasksInjector>
     </PomodoroProvider>
-  )
-}
+  );
+};
 
 const MockedTasksInjector: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setTasks } = usePomodoroContext()
+  const { setTasks } = usePomodoroContext();
 
   useEffect(() => {
     setTasks([
@@ -30,11 +30,11 @@ const MockedTasksInjector: React.FC<{ children: React.ReactNode }> = ({ children
         pomodoros: 1,
         completedPomodoros: 0,
       },
-    ])
-  }, [setTasks])
+    ]);
+  }, [setTasks]);
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof TaskList> = {
   title: 'Molecules/TaskList',
@@ -47,9 +47,9 @@ const meta: Meta<typeof TaskList> = {
       </WithMockedContext>
     ),
   ],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof TaskList>
+export default meta;
+type Story = StoryObj<typeof TaskList>;
 
-export const Default: Story = {}
+export const Default: Story = {};

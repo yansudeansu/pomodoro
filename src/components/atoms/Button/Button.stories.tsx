@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from './Button'
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
 
 const meta: Meta<typeof Button> = {
   title: 'Atoms/Button',
@@ -30,10 +30,10 @@ const meta: Meta<typeof Button> = {
       description: 'Disables the button if true',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Button>
+export default meta;
+type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   args: {
@@ -41,7 +41,7 @@ export const Default: Story = {
     variant: 'default',
     size: 'default',
   },
-}
+};
 
 export const Active: Story = {
   args: {
@@ -49,7 +49,7 @@ export const Active: Story = {
     variant: 'active',
     size: 'default',
   },
-}
+};
 
 export const Large: Story = {
   args: {
@@ -57,11 +57,11 @@ export const Large: Story = {
     size: 'large',
     variant: 'default',
   },
-}
+};
 
 export const Disabled: Story = {
   args: {
     children: 'Disabled',
     disabled: true,
   },
-}
+};
