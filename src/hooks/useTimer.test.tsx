@@ -1,7 +1,7 @@
 import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { PomodoroProvider, usePomodoroContext } from '../context/PomodoroContext'
-import { useTimer } from './useTimer'
+import { calculateRemainingTime, useTimer } from './useTimer'
 import * as sound from '../utils/sound'
 
 vi.useFakeTimers()
@@ -152,5 +152,18 @@ describe('useTimer', () => {
     expect(clearSpy).toHaveBeenCalled()
 
     clearSpy.mockRestore()
+  })
+
+  it('returns 0 if targetTime is null', () => {
+    const now = Date.now()
+    const result = calculateRemainingTime(null, now)
+    expect(result).toBe(0)
+  })
+
+  it('calculates remaining seconds if targetTime is set', () => {
+    const now = Date.now()
+    const target = now + 5000
+    const result = calculateRemainingTime(target, now)
+    expect(result).toBe(5)
   })
 })
