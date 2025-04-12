@@ -1,22 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { TimerDisplay } from "./TimerDisplay";
+import type { Meta, StoryObj } from '@storybook/react';
+import { TimerDisplay } from './TimerDisplay';
 
 const meta: Meta<typeof TimerDisplay> = {
-  title: "Atoms/TimerDisplay",
+  title: 'Atoms/TimerDisplay',
   component: TimerDisplay,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          "The `TimerDisplay` component formats and displays time in `MM:SS` format, using the `Text` atom with a `timer` variant.",
+          'The `TimerDisplay` component formats and displays time in `MM:SS` format, using the `Text` atom with a `timer` variant.',
       },
     },
   },
   argTypes: {
     time: {
-      control: { type: "number", min: 0 },
-      description: "Time in seconds to be formatted and displayed",
+      control: { type: 'number', min: 0 },
+      description: 'Time in seconds to be formatted and displayed',
     },
   },
 };

@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import styles from "./TaskManager.module.css";
-import { TaskInput } from "../../molecules/TaskInput/TaskInput";
-import { Button } from "../../atoms/Button/Button";
-import { TaskList } from "../../molecules/TaskList/TaskList";
-import { usePomodoroContext } from "../../../context/PomodoroContext";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState } from 'react';
+import styles from './TaskManager.module.css';
+import { TaskInput } from '../../molecules/TaskInput/TaskInput';
+import { Button } from '../../atoms/Button/Button';
+import { TaskList } from '../../molecules/TaskList/TaskList';
+import { usePomodoroContext } from '../../../context/PomodoroContext';
+import { v4 as uuidv4 } from 'uuid';
 
 export const TaskManager: React.FC = () => {
   const { setTasks, mode } = usePomodoroContext();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
 
   const handleAddTask = () => {
     const trimmed = inputValue.trim();
@@ -23,11 +23,11 @@ export const TaskManager: React.FC = () => {
     };
 
     setTasks((prev) => [...prev, newTask]);
-    setInputValue("");
+    setInputValue('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleAddTask();
+    if (e.key === 'Enter') handleAddTask();
   };
 
   return (

@@ -1,12 +1,12 @@
-import React from "react";
-import styles from "./PomodoroTimer.module.css";
-import { ModeSwitcher } from "../../molecules/ModeSwitcher/ModeSwitcher";
-import { TimerControls } from "../../molecules/TimerControls/TimerControls";
-import { TimerDisplay } from "../../atoms/TimerDisplay/TimerDisplay";
-import { Text } from "../../atoms/Text/Text";
-import { InfoTooltip } from "../../molecules/InfoTooltip/InfoTooltip";
-import { usePomodoroContext } from "../../../context/PomodoroContext";
-import { useTimer } from "../../../hooks/useTimer";
+import React from 'react';
+import styles from './PomodoroTimer.module.css';
+import { ModeSwitcher } from '../../molecules/ModeSwitcher/ModeSwitcher';
+import { TimerControls } from '../../molecules/TimerControls/TimerControls';
+import { TimerDisplay } from '../../atoms/TimerDisplay/TimerDisplay';
+import { Text } from '../../atoms/Text/Text';
+import { InfoTooltip } from '../../molecules/InfoTooltip/InfoTooltip';
+import { usePomodoroContext } from '../../../context/PomodoroContext';
+import { useTimer } from '../../../hooks/useTimer';
 
 export const PomodoroTimer: React.FC = () => {
   useTimer();
@@ -14,9 +14,9 @@ export const PomodoroTimer: React.FC = () => {
   const { timeLeft, mode } = usePomodoroContext();
 
   const modeLabel = {
-    pomodoro: "Pomodoro",
-    short_break: "Short Break",
-    long_break: "Long Break",
+    pomodoro: 'Pomodoro',
+    short_break: 'Short Break',
+    long_break: 'Long Break',
   }[mode];
 
   return (

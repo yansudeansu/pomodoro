@@ -1,14 +1,9 @@
-import React, { useEffect } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
-import { PomodoroPage } from "./PomodoroPage";
-import {
-  PomodoroProvider,
-  usePomodoroContext,
-} from "../../../context/PomodoroContext";
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { PomodoroPage } from './PomodoroPage';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
-const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedValues>{children}</MockedValues>
@@ -16,23 +11,21 @@ const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-const MockedValues: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { setTasks, setMode } = usePomodoroContext();
 
   useEffect(() => {
     const defaultTasks = [
       {
-        id: "1",
-        title: "Design UI for Timer",
+        id: '1',
+        title: 'Design UI for Timer',
         completed: false,
         pomodoros: 2,
         completedPomodoros: 1,
       },
       {
-        id: "2",
-        title: "Review task manager UI",
+        id: '2',
+        title: 'Review task manager UI',
         completed: false,
         pomodoros: 1,
         completedPomodoros: 0,
@@ -40,14 +33,15 @@ const MockedValues: React.FC<{ children: React.ReactNode }> = ({
     ];
 
     setTasks(defaultTasks);
-    setMode("pomodoro");
+    setMode('pomodoro');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <>{children}</>;
 };
 
 const meta: Meta<typeof PomodoroPage> = {
-  title: "Pages/PomodoroPage",
+  title: 'Pages/PomodoroPage',
   component: PomodoroPage,
   decorators: [
     (Story) => (
@@ -60,7 +54,7 @@ const meta: Meta<typeof PomodoroPage> = {
     docs: {
       description: {
         component:
-          "`PomodoroPage` is the main page that brings together the Pomodoro timer and task management. It displays the timer and allows users to manage tasks and Pomodoros.",
+          '`PomodoroPage` is the main page that brings together the Pomodoro timer and task management. It displays the timer and allows users to manage tasks and Pomodoros.',
       },
     },
   },

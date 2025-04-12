@@ -1,19 +1,17 @@
-import React from "react";
-import { Checkbox } from "../../atoms/Checkbox/Checkbox";
-import { IconButton } from "../../atoms/IconButton/IconButton";
-import { Text } from "../../atoms/Text/Text";
-import { AppIcons } from "../../atoms/Icons/Icons";
-import { usePomodoroContext } from "../../../context/PomodoroContext";
-import styles from "./TaskList.module.css";
+import React from 'react';
+import { Checkbox } from '../../atoms/Checkbox/Checkbox';
+import { IconButton } from '../../atoms/IconButton/IconButton';
+import { Text } from '../../atoms/Text/Text';
+import { AppIcons } from '../../atoms/Icons/Icons';
+import { usePomodoroContext } from '../../../context/PomodoroContext';
+import styles from './TaskList.module.css';
 
 export const TaskList: React.FC = () => {
   const { tasks, setTasks, mode } = usePomodoroContext();
 
   const toggleTask = (id: string) => {
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+      prev.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
     );
   };
 
@@ -24,9 +22,7 @@ export const TaskList: React.FC = () => {
   const addPomodoro = (id: string) => {
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id && task.pomodoros < 4
-          ? { ...task, pomodoros: task.pomodoros + 1 }
-          : task
+        task.id === id && task.pomodoros < 4 ? { ...task, pomodoros: task.pomodoros + 1 } : task
       )
     );
   };
@@ -48,10 +44,7 @@ export const TaskList: React.FC = () => {
                   onChange={() => toggleTask(task.id)}
                   mode={mode}
                 />
-                <Text
-                  variant="body"
-                  className={task.completed ? styles.completed : ""}
-                >
+                <Text variant="body" className={task.completed ? styles.completed : ''}>
                   {task.title}
                 </Text>
               </label>
@@ -59,10 +52,7 @@ export const TaskList: React.FC = () => {
               <div className={styles.pomodoroWrapper}>
                 <div className={styles.pomodoroIcons}>
                   {[...Array(task.pomodoros)].map((_, i) => {
-                    const Icon =
-                      i < (task.completedPomodoros ?? 0)
-                        ? PomodoroDoneIcon
-                        : PomodoroIcon;
+                    const Icon = i < task.completedPomodoros ? PomodoroDoneIcon : PomodoroIcon;
                     return <Icon key={i} size={16} />;
                   })}
                 </div>

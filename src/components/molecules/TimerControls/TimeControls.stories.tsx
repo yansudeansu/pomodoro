@@ -1,14 +1,9 @@
-import React, { useEffect } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
-import { TimerControls } from "./TimerControls";
-import {
-  PomodoroProvider,
-  usePomodoroContext,
-} from "../../../context/PomodoroContext";
+import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { TimerControls } from './TimerControls';
+import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 
-const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <PomodoroProvider>
       <MockedContext>{children}</MockedContext>
@@ -16,16 +11,14 @@ const WithMockedContext: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-const MockedContext: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const MockedContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { setTasks, setActiveTaskId } = usePomodoroContext();
 
   useEffect(() => {
     setTasks([
       {
-        id: "1",
-        title: "Write documentation",
+        id: '1',
+        title: 'Write documentation',
         completed: false,
         pomodoros: 2,
         completedPomodoros: 1,
@@ -39,7 +32,7 @@ const MockedContext: React.FC<{ children: React.ReactNode }> = ({
 };
 
 const meta: Meta<typeof TimerControls> = {
-  title: "Molecules/TimerControls",
+  title: 'Molecules/TimerControls',
   component: TimerControls,
   decorators: [
     (Story) => (
@@ -52,7 +45,7 @@ const meta: Meta<typeof TimerControls> = {
     docs: {
       description: {
         component:
-          "`TimerControls` toggles the Pomodoro timer between running and paused states. When starting, it also selects the next unfinished task.",
+          '`TimerControls` toggles the Pomodoro timer between running and paused states. When starting, it also selects the next unfinished task.',
       },
     },
   },

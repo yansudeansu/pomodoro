@@ -96,6 +96,14 @@ src/
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from the community!
+
+Please check out our [**Contributing Guidelines**](CONTRIBUTING.md) to get started.
+
+---
+
 ## 🎵 Credits
 
 **Sounds used:**
