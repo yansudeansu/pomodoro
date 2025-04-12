@@ -1,0 +1,18 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #ff4d4d;
+  text-decoration: none;
+  transition: color 0.1s ease;
+  font-family: "Inter", sans-serif;
+}
+
+.link:hover {
+  color: #f0f0f0;
+  text-decoration: underline;
+}
+
+.icon {
+  flex-shrink: 0;
+}

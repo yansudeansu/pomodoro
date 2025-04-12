@@ -7,6 +7,7 @@ import {
   Brain,
   CalendarDays,
   Split,
+  ExternalLink,
 } from "lucide-react";
 
 export const AppIcons = {
@@ -18,6 +19,7 @@ export const AppIcons = {
   brain: Brain,
   calendar: CalendarDays,
   split: Split,
+  link: ExternalLink,
 };
 
 export type IconName = keyof typeof AppIcons;
