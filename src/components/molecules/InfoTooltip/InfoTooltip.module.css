@@ -22,10 +22,9 @@
 
 .tooltip {
   position: absolute;
-  top: 0rem;
-  right: 0;
+  top: 2.2rem;
+  left: 0;
   width: 300px;
-  left: 2.2rem;
   background: #1e1e1e;
   color: #f5f5f5;
   font-size: 0.85rem;
@@ -57,4 +56,30 @@
 
 .container:focus {
   outline: none;
+}
+
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .tooltip {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    border-radius: 1rem 1rem 0 0;
+    padding: 1.5rem;
+    z-index: 100;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
 }

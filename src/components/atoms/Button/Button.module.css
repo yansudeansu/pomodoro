@@ -6,6 +6,7 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   border: 2px solid transparent;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .button:hover:enabled {
