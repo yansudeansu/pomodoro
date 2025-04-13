@@ -1,4 +1,4 @@
-import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, vi, expect, beforeEach, afterEach, Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { PomodoroProvider, usePomodoroContext } from '../context/PomodoroContext';
 import { calculateRemainingTime, useTimer } from './useTimer';
@@ -12,14 +12,38 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useTimer', () => {
   let alarmSpy: ReturnType<typeof vi.spyOn>;
+  let mockNotification: Mock;
+  let OriginalNotification: typeof globalThis.Notification;
 
   beforeEach(() => {
     alarmSpy = vi.spyOn(sound, 'playAlarm').mockImplementation(() => {});
+
+    mockNotification = vi.fn();
+    OriginalNotification = globalThis.Notification;
+
+    class MockNotification {
+      static permission = 'granted';
+      constructor(title: string, options?: NotificationOptions) {
+        mockNotification(title, options);
+      }
+    }
+
+    Object.defineProperty(globalThis, 'Notification', {
+      writable: true,
+      configurable: true,
+      value: MockNotification as unknown as typeof Notification,
+    });
   });
 
   afterEach(() => {
     vi.clearAllTimers();
     alarmSpy.mockRestore();
+
+    Object.defineProperty(globalThis, 'Notification', {
+      writable: true,
+      configurable: true,
+      value: OriginalNotification,
+    });
   });
 
   it('starts and decrements the timer', () => {
@@ -165,5 +189,27 @@ describe('useTimer', () => {
     const target = now + 5000;
     const result = calculateRemainingTime(target, now);
     expect(result).toBe(5);
+  });
+
+  it('shows a notification when granted and timer ends', () => {
+    const { result } = renderHook(
+      () => {
+        useTimer();
+        return usePomodoroContext();
+      },
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.setIsRunning(true);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1500 * 1000);
+    });
+
+    expect(mockNotification).toHaveBeenCalledWith("Time's up!", {
+      body: 'Take a short break!',
+    });
   });
 });

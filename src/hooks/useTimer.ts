@@ -64,6 +64,15 @@ export const useTimer = () => {
             alarmPlayedRef.current = true;
           }
 
+          if (Notification.permission === 'granted') {
+            new Notification("Time's up!", {
+              body:
+                mode === 'pomodoro'
+                  ? 'Take a short break!'
+                  : 'Ready to focus? Start your next Pomodoro!',
+            });
+          }
+
           if (!pomodoroHandledRef.current && mode === 'pomodoro') {
             incrementCompletedPomodoros();
             pomodoroHandledRef.current = true;
