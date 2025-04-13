@@ -19,7 +19,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "noEmit": true
   },
   "include": ["src", "**/*.test.tsx", "**/*.test.ts", "src/**/*.tsx", "src/**/*.ts"],
   "exclude": ["build"]
