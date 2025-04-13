@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Pomodoro',
         short_name: 'Pomodoro',
         description: 'Stay focused with a clean pomodoro timer',
-        theme_color: '#f87171',
+        theme_color: '#121212',
         background_color: '#121212',
         display: 'standalone',
         start_url: '/pomodoro/',
@@ -57,6 +57,6 @@ export default defineConfig({
         'src/types/*',
       ],
     },
-    exclude: ['**/*.stories.tsx', 'node_modules/**'],
+    exclude: ['**/*.stories.tsx', 'node_modules/**', 'build'],
   },
 });
