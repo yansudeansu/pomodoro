@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { InfoTooltip } from './InfoTooltip';
 
@@ -38,22 +38,48 @@ describe('InfoTooltip', () => {
     expect(screen.getByText(/Take regular breaks/i)).toBeInTheDocument();
   });
 
-  it('closes the tooltip on blur', async () => {
+  it('closes the tooltip when clicking the backdrop', async () => {
     const user = userEvent.setup();
+    render(<InfoTooltip />);
+
+    await user.click(screen.getByLabelText(/toggle info/i));
+
+    expect(screen.getByText(/Pomodoro Planning Tips/i)).toBeInTheDocument();
+
+    const backdrop = screen.getByTestId('tooltip-backdrop');
+    await user.click(backdrop);
+
+    expect(screen.queryByText(/Pomodoro Planning Tips/i)).not.toBeInTheDocument();
+  });
+
+  it('closes the tooltip on blur event', async () => {
     render(
       <>
         <InfoTooltip />
-        <button data-testid="outside-button">Outside</button>
+        <button data-testid="outside">Outside</button>
       </>
     );
 
-    const toggleButton = screen.getByRole('button', { name: /toggle info/i });
+    const iconButton = screen.getByLabelText(/toggle info/i);
+    iconButton.focus();
+    await userEvent.click(iconButton);
 
-    await user.click(toggleButton);
-    expect(screen.getByText(/Pomodoro Planning Tips/i)).toBeInTheDocument();
+    const tooltipHeader = screen.getByText(/Pomodoro Planning Tips/i);
+    expect(tooltipHeader).toBeInTheDocument();
 
-    await user.click(screen.getByTestId('outside-button'));
+    // Trigger blur
+    const outsideButton = screen.getByTestId('outside');
+    outsideButton.focus();
 
+    // Wait for DOM update
+    await waitFor(() =>
+      expect(screen.queryByText(/Pomodoro Planning Tips/i)).not.toBeInTheDocument()
+    );
+  });
+
+  it('does not render tooltip or backdrop when closed', () => {
+    render(<InfoTooltip />);
+    expect(screen.queryByTestId('tooltip-backdrop')).not.toBeInTheDocument();
     expect(screen.queryByText(/Pomodoro Planning Tips/i)).not.toBeInTheDocument();
   });
 });
