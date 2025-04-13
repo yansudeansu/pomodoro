@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /pomodoro/storybook/
+
+Sitemap: https://yansudeansu.github.io/pomodoro/sitemap.xml
