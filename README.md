@@ -108,10 +108,10 @@ Please check out our [**Contributing Guidelines**](CONTRIBUTING.md) to get start
 
 **Sounds used:**
 
-- **Game Start**  
+- **Game Start**
   [foxboytails on Pixabay](https://pixabay.com/users/foxboytails-49447089/)
 
-- **8-bit Blast**  
+- **8-bit Blast**
   [freesound_community on Pixabay](https://pixabay.com/users/freesound_community-46691455/)
 
 ---

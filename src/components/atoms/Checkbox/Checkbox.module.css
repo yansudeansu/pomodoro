@@ -3,8 +3,8 @@
   height: 1.2rem;
   cursor: pointer;
   appearance: none;
-  border-radius: 0.25rem;
-  border: 2px solid #aaa;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border-muted);
   display: inline-block;
   position: relative;
 }
@@ -22,16 +22,16 @@
 }
 
 .pomodoro {
-  color: #ff4d4d;
-  background-color: #2e2e2e;
+  color: var(--text-color-pomodoro);
+  background-color: var(--background-color-pomodoro);
 }
 
 .short_break {
-  color: #48c4b3;
-  background-color: #203b3a;
+  color: var(--text-color-short-break);
+  background-color: var(--background-color-short-break);
 }
 
 .long_break {
-  color: #d17777;
-  background-color: #3b2222;
+  color: var(--text-color-long-break);
+  background-color: var(--background-color-long-break);
 }
