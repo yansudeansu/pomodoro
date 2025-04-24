@@ -1,27 +1,27 @@
 .text {
-  color: #f0f0f0;
-  font-family: 'Inter', sans-serif;
+  color: var(--color-text);
+  font-family: var(--font-family-base);
 }
 
 .heading {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
 }
 
 .label {
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
+  color: var(--color-heading);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .timer {
-  font-size: 4rem;
-  font-weight: bold;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
   text-align: center;
 }
 
 .body {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
 }

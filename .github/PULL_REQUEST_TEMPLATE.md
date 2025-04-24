@@ -1,51 +1,52 @@
 # 📝 Pull Request
 
-> Thank you for contributing to Pomodoro! Please review the checklist and provide any relevant information.
+> Thanks for contributing to Pomodoro! Please review the checklist and provide any relevant context below.
 
 ---
 
-## 📌 PR Summary
+## 📌 Summary
 
 **Type:** <!-- feature | fix | chore | docs | refactor -->
 **Scope:** <!-- e.g. Timer logic, Header UI, Test cleanup -->
-**Branch:** `feature/your-branch-name` → `develop`
+**From:** `your-branch-name`
+**Info:** `target-branch-name`
 
-> Describe what this PR changes and why. Include screenshots if it's UI-related.
+> What does this PR do? What problem does it solve or improve? Add screenshots if it's a UI change.
 
 ---
 
 ## ✅ Checklist
 
-- [ ] My branch is up to date with `develop`
-- [ ] I’ve followed the [branch naming conventions](../blob/develop/CONTRIBUTING.md#branch-naming-conventions)
+- [ ] My branch is up to date with the target branch
+- [ ] I followed the [branch naming conventions](../blob/develop/CONTRIBUTING.md#branch-naming-conventions)
 - [ ] Lint passes (`yarn lint`)
 - [ ] Tests pass (`yarn test`)
-- [ ] New features or logic are tested
-- [ ] Added/updated Storybook stories (if applicable)
-- [ ] Added/updated README or CONTRIBUTING (if docs changed)
-- [ ] No `console.log`, `console.error`, or `TODO` comments remain
+- [ ] New logic or features have corresponding tests
+- [ ] Storybook stories are added/updated (if applicable)
+- [ ] Documentation is updated (if applicable)
+- [ ] No `console.log`, `console.error`, or `TODO` leftover comments.
 
 ---
 
 ## 🧪 What’s Covered?
 
-> Briefly describe what was added, removed, or changed. If tests or workflows were touched, summarize what’s covered.
+> Brief summary of what code paths, components or logic where affected or added
 
 ---
 
-## 📸 Screenshots (optional)
+## 📸 Screenshots (if applicable)
 
-> Paste screenshots or screen recordings here if you’ve made visual/UI changes.
-
----
-
-## 📂 Related Issues or Discussions
-
-Closes #**_  
-Related to #_**
-
-<!-- Or say "N/A" -->
+> Paste screenshots or screen recordings here for UI-related changes.
 
 ---
 
-Thanks again! 🎉
+## 📂 Related Issues
+
+Closes #**\_**
+Related to #**\_**
+
+<!-- Or write "N/A" -->
+
+---
+
+Thanks for your contribution! 🎉

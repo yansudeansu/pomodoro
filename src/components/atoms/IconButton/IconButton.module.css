@@ -2,12 +2,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: var(--spacing-xs);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: inherit;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-fast);
 }
 
 .button:hover {
@@ -15,17 +15,17 @@
 }
 
 .small {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
 }
 
 .medium {
-  font-size: 1.1rem;
+  font-size: var(--font-size-md);
 }
 
 .danger {
-  color: #ff4d4d;
+  color: var(--color-danger);
 }
 
 .success {
-  color: #4dff5f;
+  color: var(--color-success);
 }

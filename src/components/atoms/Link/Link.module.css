@@ -1,15 +1,15 @@
 .link {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  color: #ff4d4d;
+  gap: var(--spacing-xs);
+  color: var(--color-primary);
   text-decoration: none;
-  transition: color 0.1s ease;
-  font-family: 'Inter', sans-serif;
+  transition: color var(--transition-fast);
+  font-family: var(--font-family-base);
 }
 
 .link:hover {
-  color: #f0f0f0;
+  color: var(--color-text);
   text-decoration: underline;
 }
 
