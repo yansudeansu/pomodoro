@@ -3,9 +3,21 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const ReactComplilerConfig = {
+  // ...
+};
+
+// https://github.com/facebook/react/issues/32950
+// Temporary solution until they fix above issue
+const isCompilerEnabled = process.env.REACT_COMPILER !== 'false';
+
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: isCompilerEnabled ? [['babel-plugin-react-compiler', ReactComplilerConfig]] : [],
+      },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -47,6 +59,7 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test/setup.ts',
     coverage: {
+      provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.ts', 'src/**/*.tsx'],
       exclude: [

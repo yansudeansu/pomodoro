@@ -34,6 +34,7 @@ const MockedValues: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     setTasks(defaultTasks);
     setMode('pomodoro');
+    // eslint-disable-next-line react-hooks/react-compiler
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
