@@ -1,1 +1,0 @@
-import{j as s}from"./jsx-runtime-D_zvdyIk.js";const n="_input_1gd5e_1",p={input:n},a=({className:t="",...e})=>s.jsx("input",{type:"text",className:`${p.input} ${t}`,...e});a.__docgenInfo={description:"",methods:[],displayName:"Input",props:{className:{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:"''",computed:!1}}}};export{a as I};

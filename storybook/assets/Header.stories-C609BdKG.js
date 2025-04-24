@@ -1,3 +1,0 @@
-import{j as s}from"./jsx-runtime-D_zvdyIk.js";import{H as a}from"./Header-BaPmNKtw.js";import"./Link-B1e0G779.js";import"./Icons-BD9QZvNq.js";import"./index-D4lIrffr.js";const c={title:"Atoms/Header",component:a,tags:["autodocs"],parameters:{layout:"fullscreen",docs:{description:{component:"The `Header` component renders a fixed-position link to the GitHub repository in the top-right corner. It's intended to float above the app content."}}}},e={render:()=>s.jsx(a,{})};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
-  render: () => <Header />
-}`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const u=["Default"];export{e as Default,u as __namedExportsOrder,c as default};
