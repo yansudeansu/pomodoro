@@ -1,60 +1,60 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
   width: 100%;
   max-width: 500px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-family-base);
 }
 
 .task {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  font-size: 1.1rem;
-  border-radius: 0.4rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #f0f0f0;
-  transition: background-color 0.2s ease;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-md);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-default);
+  color: var(--color-text);
+  transition: background-color var(--transition-fast);
 }
 
 .task:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--color-surface-hover);
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
   flex: 1;
 }
 
 .taskContent {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
   cursor: pointer;
 }
 
 .completed {
   text-decoration: line-through;
-  color: #888;
+  color: var(--color-muted);
 }
 
 .pomodoroWrapper {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--spacing-xs);
 }
 
 .pomodoroIcons {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--spacing-xs);
 }
 
 .pomodoroIcons svg {
-  color: gold;
+  color: var(--color-highlight);
 }

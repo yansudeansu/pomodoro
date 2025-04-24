@@ -1,16 +1,16 @@
 .button {
   border: none;
-  border-radius: 0.5rem;
-  background-color: #ff4d4d;
-  color: white;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-fast);
   border: 2px solid transparent;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .button:hover:enabled {
-  background-color: #e84343;
+  background-color: var(--color-primary-hover);
 }
 
 .button:disabled {
@@ -20,19 +20,19 @@
 
 .default {
   padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .large {
   padding: 0.9rem 2rem;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
 }
 
 .active {
-  background-color: #5a1e1e;
-  color: #fff;
-  font-weight: 600;
-  border: 2px solid #ff4d4d;
+  background-color: var(--color-primary-active);
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
+  border: 2px solid var(--color-primary);
 }

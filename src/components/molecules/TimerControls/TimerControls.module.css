@@ -1,6 +1,6 @@
 .container {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
 }

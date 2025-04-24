@@ -3,23 +3,22 @@
   min-height: 100vh;
   padding: 3rem 1rem;
   transition: background-color 0.3s ease;
-
-  background-color: #1f1f1f;
+  background-color: var(--background-color);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .pomodoro {
-  background-color: #1f1f1f;
+  background-color: var(--background-color);
 }
 
 .short_break {
-  background-color: #1e3a3a;
+  background-color: var(--background-color-short-break);
 }
 
 .long_break {
-  background-color: #3a1e1e;
+  background-color: var(--background-color-long-break);
 }
 
 .page > * {
