@@ -39,6 +39,8 @@ const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroCon
   activeTaskId: null,
   setActiveTaskId: vi.fn(),
   incrementCompletedPomodoros: vi.fn(),
+  globalPomodoros: [],
+  setGlobalPomodoros: vi.fn(),
   ...overrides,
 });
 
