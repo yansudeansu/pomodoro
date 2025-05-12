@@ -5,6 +5,7 @@ import { TaskManager } from '../../organisms/TaskManager/TaskManager';
 import { Header } from '../../atoms/Header/Header';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
 import { v4 as uuidv4 } from 'uuid';
+import { PomodorosToday } from '../../molecules/PomodorosToday/PomodorosToday';
 
 export const PomodoroPage: React.FC = () => {
   const { setTasks, mode } = usePomodoroContext();
@@ -35,6 +36,7 @@ export const PomodoroPage: React.FC = () => {
       <Header />
       <main className={`${styles.page} ${styles[mode]}`}>
         <PomodoroTimer />
+        <PomodorosToday />
         <TaskManager
           inputValue={inputValue}
           onInputChange={(e) => setInputValue(e.target.value)}

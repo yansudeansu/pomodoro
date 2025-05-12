@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Mode, Task } from '../types';
+import { GlobalPomodoro, Mode, Task } from '../types';
 
 export interface PomodoroContextType {
   mode: Mode;
@@ -16,6 +16,8 @@ export interface PomodoroContextType {
   activeTaskId: string | null;
   setActiveTaskId: React.Dispatch<React.SetStateAction<string | null>>;
   incrementCompletedPomodoros: () => void;
+  globalPomodoros: GlobalPomodoro[];
+  setGlobalPomodoros: React.Dispatch<React.SetStateAction<GlobalPomodoro[]>>;
 }
 
 const PomodoroContext = createContext<PomodoroContextType | undefined>(undefined);
@@ -34,6 +36,14 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [timeLeft, setTimeLeft] = useState(MODE_DEFAULTS['pomodoro']);
   const [tasks, setTasks] = useState<Task[]>(() => {
     const stored = localStorage.getItem(TASKS_STORAGE_KEY);
+    try {
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [globalPomodoros, setGlobalPomodoros] = useState<GlobalPomodoro[]>(() => {
+    const stored = localStorage.getItem('global-pomodoros');
     try {
       return stored ? JSON.parse(stored) : [];
     } catch {
@@ -77,6 +87,10 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
 
+  useEffect(() => {
+    localStorage.setItem('global-pomodoros', JSON.stringify(globalPomodoros));
+  }, [globalPomodoros]);
+
   return (
     <PomodoroContext.Provider
       value={{
@@ -94,6 +108,8 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         activeTaskId,
         setActiveTaskId,
         incrementCompletedPomodoros,
+        globalPomodoros,
+        setGlobalPomodoros,
       }}
     >
       {children}

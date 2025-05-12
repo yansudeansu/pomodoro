@@ -4,19 +4,30 @@ import { IconButton } from '../../atoms/IconButton/IconButton';
 import { AppIcons } from '../../atoms/Icons/Icons';
 import { Input } from '../../atoms/Input/Input';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
-import styles from './TaskList.module.css';
 import { UIOnlyTask } from '../../../types';
+import { v4 as uuidv4 } from 'uuid';
+import styles from './TaskList.module.css';
 
 export const TaskList: React.FC = () => {
-  const { tasks, setTasks, mode } = usePomodoroContext();
+  const { tasks, setTasks, mode, setGlobalPomodoros } = usePomodoroContext();
 
   const toggleTask = (id: string) => {
+    const now = new Date().toISOString();
+
+    let shouldAddToGlobal = false;
+    let shouldRemoveFromGlobal = false;
+
     setTasks((prev) =>
       prev.map((task) => {
         const t = task as UIOnlyTask;
         if (t.id !== id) return t;
 
         const willBeCompleted = !t.completed;
+        if (willBeCompleted) {
+          shouldAddToGlobal = true;
+        } else {
+          shouldRemoveFromGlobal = true;
+        }
 
         return {
           ...t,
@@ -28,6 +39,21 @@ export const TaskList: React.FC = () => {
         };
       })
     );
+
+    if (shouldAddToGlobal) {
+      setGlobalPomodoros((prev) => [...prev, { id: uuidv4(), completedAt: now }]);
+    } else if (shouldRemoveFromGlobal) {
+      setGlobalPomodoros((prevStats) =>
+        prevStats.filter((entry) => {
+          const entryDate = new Date(entry.completedAt);
+          const isToday =
+            entryDate.getFullYear() === new Date().getFullYear() &&
+            entryDate.getMonth() === new Date().getMonth() &&
+            entryDate.getDate() === new Date().getDate();
+          return !isToday;
+        })
+      );
+    }
   };
 
   const deleteTask = (id: string) => {
