@@ -1,6 +1,7 @@
 import {
   Trash2,
   CirclePlus,
+  CircleMinus,
   Sparkle,
   Sparkles,
   Info,
@@ -8,11 +9,16 @@ import {
   CalendarDays,
   Split,
   ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  X,
+  BarChart3,
 } from 'lucide-react';
 
 export const AppIcons = {
   trash: Trash2,
   add: CirclePlus,
+  remove: CircleMinus,
   sparkle: Sparkle,
   sparkles: Sparkles,
   info: Info,
@@ -20,6 +26,10 @@ export const AppIcons = {
   calendar: CalendarDays,
   split: Split,
   link: ExternalLink,
+  chevronDown: ChevronDown,
+  chevronUp: ChevronUp,
+  close: X,
+  chart: BarChart3,
 };
 
 export type IconName = keyof typeof AppIcons;

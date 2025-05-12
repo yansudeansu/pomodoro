@@ -1,0 +1,5 @@
+.chartContainer {
+  background-color: var(--background-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}

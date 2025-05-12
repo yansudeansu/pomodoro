@@ -8,7 +8,20 @@
   font-family: var(--font-family-base);
 }
 
+.taskRowWrapper {
+  position: relative;
+}
+
+.chevronWrapper {
+  position: absolute;
+  top: 50%;
+  left: calc(-1 * 30px);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
 .task {
+  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,14 +41,12 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  flex: 1;
 }
 
 .taskContent {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  cursor: pointer;
 }
 
 .completed {

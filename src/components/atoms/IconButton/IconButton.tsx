@@ -1,12 +1,12 @@
 import { AppIcons, IconName } from '../Icons/Icons';
 import styles from './IconButton.module.css';
 
-interface IconButtonProps {
+export interface IconButtonProps {
   icon: IconName;
   onClick: () => void;
   label?: string;
   size?: 'small' | 'medium';
-  variant?: 'default' | 'success' | 'danger';
+  variant?: 'default' | 'success' | 'danger' | 'link';
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({

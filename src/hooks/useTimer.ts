@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { usePomodoroContext } from '../context/PomodoroContext';
 import { playAlarm } from '../utils/sound';
 
@@ -20,6 +21,7 @@ export const useTimer = () => {
     pomodoroCount,
     setPomodoroCount,
     incrementCompletedPomodoros,
+    setGlobalPomodoros,
   } = usePomodoroContext();
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -75,6 +77,15 @@ export const useTimer = () => {
 
           if (!pomodoroHandledRef.current && mode === 'pomodoro') {
             incrementCompletedPomodoros();
+
+            setGlobalPomodoros((prev) => [
+              ...prev,
+              {
+                id: uuidv4(),
+                completedAt: new Date().toISOString(),
+              },
+            ]);
+
             pomodoroHandledRef.current = true;
           }
 

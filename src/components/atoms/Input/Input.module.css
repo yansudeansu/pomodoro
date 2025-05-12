@@ -16,3 +16,22 @@
 .input:focus {
   border-color: var(--color-primary);
 }
+
+.borderless {
+  border: 1px solid transparent;
+  width: auto;
+  flex: 0 0 auto;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.borderless:hover,
+.borderless:focus {
+  border-color: var(--color-border);
+}
+
+.borderless:focus {
+  border-color: var(--color-primary);
+}

@@ -7,6 +7,7 @@ describe('AppIcons', () => {
     const expectedKeys = [
       'trash',
       'add',
+      'remove',
       'sparkle',
       'sparkles',
       'info',
@@ -14,6 +15,10 @@ describe('AppIcons', () => {
       'calendar',
       'split',
       'link',
+      'chevronDown',
+      'chevronUp',
+      'close',
+      'chart',
     ];
     expect(Object.keys(AppIcons).sort()).toEqual(expectedKeys.sort());
   });

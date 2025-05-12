@@ -52,3 +52,10 @@ export const WithValue: Story = {
     value: 'Pre-filled text',
   },
 };
+
+export const Borderless: Story = {
+  args: {
+    placeholder: 'Borderless input',
+    borderless: true,
+  },
+};

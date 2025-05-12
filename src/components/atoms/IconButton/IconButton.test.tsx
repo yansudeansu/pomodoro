@@ -34,4 +34,10 @@ describe('IconButton', () => {
     expect(button.className).toContain('small');
     expect(button.className).toContain('success');
   });
+
+  it('renders the correct icon component for "remove"', () => {
+    render(<IconButton icon="remove" onClick={() => {}} label="Remove item" />);
+    const button = screen.getByLabelText('Remove item');
+    expect(button).toBeInTheDocument();
+  });
 });
