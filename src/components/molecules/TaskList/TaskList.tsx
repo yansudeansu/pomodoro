@@ -47,6 +47,24 @@ export const TaskList: React.FC = () => {
       )
     );
   };
+
+  const removePomodoro = (id: string) => {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id !== id || task.pomodoros <= 1) return task;
+
+        const newPomodoros = task.pomodoros - 1;
+
+        return {
+          ...task,
+          pomodoros: newPomodoros,
+          completedPomodoros: Math.min(task.completedPomodoros, newPomodoros),
+          completed: false,
+        };
+      })
+    );
+  };
+
   const handleTitleChange = (id: string, value: string) => {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, title: value } : task)));
   };
@@ -87,6 +105,15 @@ export const TaskList: React.FC = () => {
                     return <Icon key={i} size={16} />;
                   })}
                 </div>
+                {task.pomodoros > 1 && (
+                  <IconButton
+                    icon="remove"
+                    label="Remove pomodoro"
+                    size="small"
+                    variant="danger"
+                    onClick={() => removePomodoro(task.id)}
+                  />
+                )}
                 {task.pomodoros < 4 && (
                   <IconButton
                     icon="add"

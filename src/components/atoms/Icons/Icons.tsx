@@ -1,6 +1,7 @@
 import {
   Trash2,
   CirclePlus,
+  CircleMinus,
   Sparkle,
   Sparkles,
   Info,
@@ -13,6 +14,7 @@ import {
 export const AppIcons = {
   trash: Trash2,
   add: CirclePlus,
+  remove: CircleMinus,
   sparkle: Sparkle,
   sparkles: Sparkles,
   info: Info,

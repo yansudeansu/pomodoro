@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { PomodoroProvider, usePomodoroContext } from '../../../context/PomodoroContext';
 import { TaskList } from './TaskList';
 import styles from './TaskList.module.css';
@@ -43,6 +43,7 @@ vi.mock('../../atoms/Icons/Icons', () => {
   const DonePomodoroIcon = () => <svg data-testid="done-pomodoro-icon" />;
   const TrashIcon = () => <svg data-testid="trash-icon" />;
   const AddIcon = () => <svg data-testid="add-icon" />;
+  const RemoveIcon = () => <svg data-testid="remove-icon" />;
   const InfoIcon = () => <svg data-testid="info-icon" />;
   const BrainIcon = () => <svg data-testid="brain-icon" />;
   const CalendarIcon = () => <svg data-testid="calendar-icon" />;
@@ -54,6 +55,7 @@ vi.mock('../../atoms/Icons/Icons', () => {
       sparkles: DonePomodoroIcon,
       trash: TrashIcon,
       add: AddIcon,
+      remove: RemoveIcon,
       info: InfoIcon,
       brain: BrainIcon,
       calendar: CalendarIcon,
@@ -127,5 +129,26 @@ describe('TaskList', () => {
 
     expect(done.length).toBe(5);
     expect(sparkle.length).toBe(1);
+  });
+
+  it('removes a pomodoro from a task with > 1 pomodoro', async () => {
+    const user = userEvent.setup();
+    renderWithProvider(<TaskList />);
+
+    const taskContainers = screen
+      .getAllByRole('textbox')
+      .map((input) => input.closest(`.${styles.task}`))
+      .filter((el): el is HTMLElement => el instanceof HTMLElement);
+
+    const firstTask = taskContainers[0];
+    const firstRemoveButton = within(firstTask).getByLabelText(/remove pomodoro/i);
+
+    expect(within(firstTask).getAllByTestId('done-pomodoro-icon').length).toBe(1);
+    expect(within(firstTask).getAllByTestId('pomodoro-icon').length).toBe(1);
+
+    await user.click(firstRemoveButton);
+
+    expect(within(firstTask).queryAllByTestId('done-pomodoro-icon')).toHaveLength(1);
+    expect(within(firstTask).queryAllByTestId('pomodoro-icon')).toHaveLength(0);
   });
 });

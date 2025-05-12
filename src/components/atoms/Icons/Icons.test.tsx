@@ -7,6 +7,7 @@ describe('AppIcons', () => {
     const expectedKeys = [
       'trash',
       'add',
+      'remove',
       'sparkle',
       'sparkles',
       'info',
