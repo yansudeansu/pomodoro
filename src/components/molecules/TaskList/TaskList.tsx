@@ -4,13 +4,17 @@ import { IconButton } from '../../atoms/IconButton/IconButton';
 import { AppIcons } from '../../atoms/Icons/Icons';
 import { Input } from '../../atoms/Input/Input';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
-import { UIOnlyTask } from '../../../types';
+import { Task, UIOnlyTask } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './TaskList.module.css';
 
-export const TaskList: React.FC = () => {
+interface TaskListProps {
+  onDeleteTask: (task: Task) => void;
+}
+
+export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
   const { tasks, setTasks, mode, setGlobalPomodoros } = usePomodoroContext();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   const activeTasks = tasks.filter((t) => !t.completed);
   const lastCompleted = [...tasks].reverse().find((t) => t.completed);
@@ -86,8 +90,8 @@ export const TaskList: React.FC = () => {
     }
   };
 
-  const deleteTask = (id: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+  const handleDelete = (task: Task) => {
+    onDeleteTask(task);
   };
 
   const addPomodoro = (id: string) => {
@@ -193,7 +197,7 @@ export const TaskList: React.FC = () => {
                 label="Delete task"
                 size="small"
                 variant="danger"
-                onClick={() => deleteTask(task.id)}
+                onClick={() => handleDelete(task)}
               />
             </div>
           </div>

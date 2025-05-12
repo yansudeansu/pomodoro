@@ -59,7 +59,7 @@ describe('TaskList', () => {
   });
 
   it('renders tasks', async () => {
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -89,7 +89,7 @@ describe('TaskList', () => {
 
   it('toggles task completion both ways', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -124,7 +124,9 @@ describe('TaskList', () => {
 
   it('deletes a task', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    const onDeleteTask = vi.fn();
+
+    renderWithProvider(<TaskList onDeleteTask={onDeleteTask} />, {
       tasks: [
         {
           id: '1',
@@ -135,14 +137,18 @@ describe('TaskList', () => {
         },
       ],
     });
+
     const deleteButtons = screen.getAllByLabelText(/delete task/i);
     await user.click(deleteButtons[0]);
-    expect(screen.queryByDisplayValue('Test Task')).not.toBeInTheDocument();
+
+    expect(onDeleteTask).toHaveBeenCalledWith(
+      expect.objectContaining({ id: '1', title: 'Test Task' })
+    );
   });
 
   it('adds a pomodoro to a task with < 4', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -159,7 +165,7 @@ describe('TaskList', () => {
   });
 
   it('does not show add button for task with pomodoros >= 4', () => {
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -175,7 +181,7 @@ describe('TaskList', () => {
   });
 
   it('applies completed class conditionally', async () => {
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -206,7 +212,7 @@ describe('TaskList', () => {
 
   it('updates task title on input change', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -224,7 +230,7 @@ describe('TaskList', () => {
   });
 
   it('renders completed and incomplete pomodoro icons correctly', async () => {
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -257,7 +263,7 @@ describe('TaskList', () => {
 
   it('removes a pomodoro from a task with > 1 pomodoro', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -288,7 +294,7 @@ describe('TaskList', () => {
 
   it('adds a globalPomodoro entry when task is marked complete', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -322,7 +328,7 @@ describe('TaskList', () => {
     const user = userEvent.setup();
     const today = new Date();
 
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       globalPomodoros: [{ id: 'abc', taskId: '1', completedAt: today.toISOString() }],
       tasks: [
         {
@@ -354,7 +360,7 @@ describe('TaskList', () => {
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
 
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       globalPomodoros: [
         {
           id: 'keep-1',
@@ -396,7 +402,7 @@ describe('TaskList', () => {
 
   it('only updates the correct task when adding pomodoro', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -437,7 +443,7 @@ describe('TaskList', () => {
 
   it('only updates the title of the targeted task', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -471,7 +477,7 @@ describe('TaskList', () => {
 
   it('does not affect other tasks when removing pomodoro', async () => {
     const user = userEvent.setup();
-    renderWithProvider(<TaskList />, {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -507,8 +513,9 @@ describe('TaskList', () => {
     expect(within(taskContainers[1]).getAllByTestId('pomodoro-icon')).toHaveLength(1);
   });
 
-  it('shows only last completed task when all tasks are completed and collapsed', () => {
-    renderWithProvider(<TaskList />, {
+  it('shows only last completed task when all tasks are completed and collapsed', async () => {
+    const user = userEvent.setup();
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [
         {
           id: '1',
@@ -527,7 +534,30 @@ describe('TaskList', () => {
       ],
     });
 
+    const toggle = await screen.findByLabelText(/collapse tasks/i);
+    await user.click(toggle);
+
     expect(screen.queryByDisplayValue('First Completed')).not.toBeInTheDocument();
     expect(screen.getByDisplayValue('Most Recent Completed')).toBeInTheDocument();
+  });
+
+  it('shows only one active task when collapsed and there are multiple active tasks', async () => {
+    const user = userEvent.setup();
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
+      tasks: [
+        { id: '1', title: 'First', completed: false, pomodoros: 1, completedPomodoros: 0 },
+        { id: '2', title: 'Second', completed: false, pomodoros: 1, completedPomodoros: 0 },
+        { id: '3', title: 'Third', completed: true, pomodoros: 1, completedPomodoros: 1 },
+      ],
+    });
+
+    const toggle = screen.queryByLabelText(/collapse tasks/i);
+    if (toggle) {
+      await user.click(toggle);
+    }
+
+    expect(screen.getByDisplayValue('First')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('Second')).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue('Third')).not.toBeInTheDocument();
   });
 });

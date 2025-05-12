@@ -1,7 +1,7 @@
 import { AppIcons, IconName } from '../Icons/Icons';
 import styles from './IconButton.module.css';
 
-interface IconButtonProps {
+export interface IconButtonProps {
   icon: IconName;
   onClick: () => void;
   label?: string;
