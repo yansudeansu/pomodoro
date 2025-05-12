@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './Input.module.css';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -6,9 +5,22 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   borderless?: boolean;
 }
 
-export const Input: React.FC<InputProps> = ({ className = '', borderless = false, ...props }) => {
+export const Input: React.FC<InputProps> = ({
+  className = '',
+  borderless = false,
+  value,
+  ...props
+}) => {
   const borderlessClass = borderless ? styles.borderless : '';
+  const title = borderless && typeof value === 'string' ? value : undefined;
+
   return (
-    <input type="text" className={`${styles.input} ${borderlessClass} ${className}`} {...props} />
+    <input
+      type="text"
+      className={`${styles.input} ${borderlessClass} ${className}`}
+      value={value}
+      title={title}
+      {...props}
+    />
   );
 };

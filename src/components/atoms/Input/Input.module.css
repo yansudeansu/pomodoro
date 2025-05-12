@@ -21,6 +21,10 @@
   border: 1px solid transparent;
   width: auto;
   flex: 0 0 auto;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .borderless:hover,
