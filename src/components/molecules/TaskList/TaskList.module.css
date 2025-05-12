@@ -15,13 +15,13 @@
 .chevronWrapper {
   position: absolute;
   top: 50%;
-  left: calc(-1 * 30px); /* or try -24px */
+  left: calc(-1 * 30px);
   transform: translateY(-50%);
   z-index: 1;
 }
 
 .task {
-  flex: 1; /* Take remaining space beside chevron */
+  flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -52,7 +52,7 @@ describe('filterToday', () => {
 });
 
 describe('getWeeklySummary', () => {
-  const mockToday = new Date('2025-05-14T12:00:00.000Z'); // Tuesday
+  const mockToday = new Date('2025-05-14T12:00:00.000Z');
 
   beforeAll(() => {
     vi.useFakeTimers();
@@ -66,15 +66,15 @@ describe('getWeeklySummary', () => {
   it('returns 7 days starting from Monday', () => {
     const summary = getWeeklySummary([]);
     expect(summary).toHaveLength(7);
-    expect(summary[0].date.getDay()).toBe(1); // Monday
-    expect(summary[6].date.getDay()).toBe(0); // Sunday
+    expect(summary[0].date.getDay()).toBe(1);
+    expect(summary[6].date.getDay()).toBe(0);
   });
 
   it('counts completed entries on the correct day', () => {
     const entries = [
-      { completedAt: '2025-05-13T10:00:00.000Z' }, // Tue
-      { completedAt: '2025-05-13T11:00:00.000Z' }, // Tue
-      { completedAt: '2025-05-14T12:00:00.000Z' }, // Wed
+      { completedAt: '2025-05-13T10:00:00.000Z' },
+      { completedAt: '2025-05-13T11:00:00.000Z' },
+      { completedAt: '2025-05-14T12:00:00.000Z' },
     ];
     const summary = getWeeklySummary(entries);
 
@@ -86,9 +86,7 @@ describe('getWeeklySummary', () => {
   });
 
   it('returns zero count for days with no entries', () => {
-    const entries = [
-      { completedAt: '2025-05-12T08:00:00.000Z' }, // Mon
-    ];
+    const entries = [{ completedAt: '2025-05-12T08:00:00.000Z' }];
     const summary = getWeeklySummary(entries);
 
     const counts = summary.map((d) => d.count);
@@ -98,8 +96,8 @@ describe('getWeeklySummary', () => {
 
   it('ignores entries outside the current week', () => {
     const entries = [
-      { completedAt: '2025-05-11T23:59:59.000Z' }, // Sunday before
-      { completedAt: '2025-05-19T00:00:00.000Z' }, // Next Monday
+      { completedAt: '2025-05-11T23:59:59.000Z' },
+      { completedAt: '2025-05-19T00:00:00.000Z' },
     ];
     const summary = getWeeklySummary(entries);
     const total = summary.reduce((sum, d) => sum + d.count, 0);
