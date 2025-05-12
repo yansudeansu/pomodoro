@@ -14,5 +14,6 @@ export type UIOnlyTask = Task & {
 
 export interface GlobalPomodoro {
   id: string;
+  taskId?: string;
   completedAt: string;
 }

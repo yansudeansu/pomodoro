@@ -15,6 +15,8 @@ describe('AppIcons', () => {
       'calendar',
       'split',
       'link',
+      'chevronDown',
+      'chevronUp',
     ];
     expect(Object.keys(AppIcons).sort()).toEqual(expectedKeys.sort());
   });

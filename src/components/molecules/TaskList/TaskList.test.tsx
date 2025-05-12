@@ -33,6 +33,8 @@ vi.mock('../../atoms/Icons/Icons', () => {
   const BrainIcon = () => <svg data-testid="brain-icon" />;
   const CalendarIcon = () => <svg data-testid="calendar-icon" />;
   const SplitIcon = () => <svg data-testid="split-icon" />;
+  const ChevronDown = () => <svg data-testid="chevron-down" />;
+  const ChevronUp = () => <svg data-testid="chevron-up" />;
 
   return {
     AppIcons: {
@@ -45,6 +47,8 @@ vi.mock('../../atoms/Icons/Icons', () => {
       brain: BrainIcon,
       calendar: CalendarIcon,
       split: SplitIcon,
+      chevronDown: ChevronDown,
+      chevronUp: ChevronUp,
     },
   };
 });
@@ -73,6 +77,12 @@ describe('TaskList', () => {
         },
       ],
     });
+
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await userEvent.click(toggleButton);
+    }
+
     expect(await screen.findByDisplayValue('Test Task')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Complete Me')).toBeInTheDocument();
   });
@@ -97,6 +107,11 @@ describe('TaskList', () => {
         },
       ],
     });
+
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await user.click(toggleButton);
+    }
 
     const checkboxes = screen.getAllByRole('checkbox');
 
@@ -159,7 +174,7 @@ describe('TaskList', () => {
     expect(buttons.length).toBe(0);
   });
 
-  it('applies completed class conditionally', () => {
+  it('applies completed class conditionally', async () => {
     renderWithProvider(<TaskList />, {
       tasks: [
         {
@@ -178,6 +193,12 @@ describe('TaskList', () => {
         },
       ],
     });
+
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await userEvent.click(toggleButton);
+    }
+
     const inputs = screen.getAllByRole('textbox');
     expect(inputs[0].className).not.toContain(styles.completed);
     expect(inputs[1].className).toContain(styles.completed);
@@ -202,7 +223,7 @@ describe('TaskList', () => {
     expect(input).toHaveValue('Updated Task');
   });
 
-  it('renders completed and incomplete pomodoro icons correctly', () => {
+  it('renders completed and incomplete pomodoro icons correctly', async () => {
     renderWithProvider(<TaskList />, {
       tasks: [
         {
@@ -221,6 +242,12 @@ describe('TaskList', () => {
         },
       ],
     });
+
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await userEvent.click(toggleButton);
+    }
+
     const done = screen.getAllByTestId('done-pomodoro-icon');
     const sparkle = screen.getAllByTestId('pomodoro-icon');
 
@@ -281,7 +308,7 @@ describe('TaskList', () => {
 
     await waitFor(() => {
       const stored = JSON.parse(localStorage.getItem('global-pomodoros') || '[]');
-      expect(stored.length).toBe(1);
+      expect(stored.length).toBe(2);
       expect(stored[0]).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -296,7 +323,7 @@ describe('TaskList', () => {
     const today = new Date();
 
     renderWithProvider(<TaskList />, {
-      globalPomodoros: [{ id: 'abc', completedAt: today.toISOString() }],
+      globalPomodoros: [{ id: 'abc', taskId: '1', completedAt: today.toISOString() }],
       tasks: [
         {
           id: '1',
@@ -320,6 +347,53 @@ describe('TaskList', () => {
     });
   });
 
+  it('does not remove globalPomodoros from other tasks or days when task is unchecked', async () => {
+    const user = userEvent.setup();
+
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    renderWithProvider(<TaskList />, {
+      globalPomodoros: [
+        {
+          id: 'keep-1',
+          taskId: 'other-task',
+          completedAt: today.toISOString(),
+        },
+        {
+          id: 'keep-2',
+          taskId: '1',
+          completedAt: yesterday.toISOString(),
+        },
+      ],
+      tasks: [
+        {
+          id: '1',
+          title: 'Target Task',
+          completed: true,
+          pomodoros: 1,
+          completedPomodoros: 1,
+        },
+      ],
+    });
+
+    const checkbox = await screen.findByRole('checkbox');
+
+    await act(async () => {
+      await user.click(checkbox);
+    });
+
+    await waitFor(() => {
+      const stored: GlobalPomodoro[] = JSON.parse(localStorage.getItem('global-pomodoros') || '[]');
+      const ids = stored.map((g) => g.id);
+
+      expect(stored).toHaveLength(2);
+      expect(ids).toContain('keep-1');
+      expect(ids).toContain('keep-2');
+    });
+  });
+
   it('only updates the correct task when adding pomodoro', async () => {
     const user = userEvent.setup();
     renderWithProvider(<TaskList />, {
@@ -340,6 +414,11 @@ describe('TaskList', () => {
         },
       ],
     });
+
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await user.click(toggleButton);
+    }
 
     const addButtons = screen.getAllByLabelText(/add pomodoro/i);
     await user.click(addButtons[1]);
@@ -377,6 +456,11 @@ describe('TaskList', () => {
       ],
     });
 
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await user.click(toggleButton);
+    }
+
     const inputs = screen.getAllByRole('textbox');
     await user.clear(inputs[1]);
     await user.type(inputs[1], 'Edited Title');
@@ -406,6 +490,11 @@ describe('TaskList', () => {
       ],
     });
 
+    const toggleButton = screen.queryByLabelText(/show all tasks/i);
+    if (toggleButton) {
+      await user.click(toggleButton);
+    }
+
     const removeButtons = screen.getAllByLabelText(/remove pomodoro/i);
     await user.click(removeButtons[1]);
 
@@ -416,5 +505,29 @@ describe('TaskList', () => {
 
     expect(within(taskContainers[0]).getAllByTestId('pomodoro-icon')).toHaveLength(2);
     expect(within(taskContainers[1]).getAllByTestId('pomodoro-icon')).toHaveLength(1);
+  });
+
+  it('shows only last completed task when all tasks are completed and collapsed', () => {
+    renderWithProvider(<TaskList />, {
+      tasks: [
+        {
+          id: '1',
+          title: 'First Completed',
+          completed: true,
+          pomodoros: 2,
+          completedPomodoros: 2,
+        },
+        {
+          id: '2',
+          title: 'Most Recent Completed',
+          completed: true,
+          pomodoros: 1,
+          completedPomodoros: 1,
+        },
+      ],
+    });
+
+    expect(screen.queryByDisplayValue('First Completed')).not.toBeInTheDocument();
+    expect(screen.getByDisplayValue('Most Recent Completed')).toBeInTheDocument();
   });
 });

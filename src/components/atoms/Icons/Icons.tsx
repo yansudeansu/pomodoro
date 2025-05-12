@@ -9,6 +9,8 @@ import {
   CalendarDays,
   Split,
   ExternalLink,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 export const AppIcons = {
@@ -22,6 +24,8 @@ export const AppIcons = {
   calendar: CalendarDays,
   split: Split,
   link: ExternalLink,
+  chevronDown: ChevronDown,
+  chevronUp: ChevronUp,
 };
 
 export type IconName = keyof typeof AppIcons;

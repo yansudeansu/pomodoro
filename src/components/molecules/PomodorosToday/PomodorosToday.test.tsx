@@ -28,7 +28,8 @@ describe('<PomodorosToday />', () => {
     });
 
     const { container } = render(<PomodorosToday />);
-    expect(container.firstChild).toBeNull();
+    expect(container.querySelector('span')).toBeTruthy();
+    expect(container.querySelector('span')?.textContent?.trim()).toBe('');
   });
 
   it('renders the correct count of today’s pomodoros', () => {

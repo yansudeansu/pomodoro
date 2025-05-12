@@ -8,16 +8,20 @@ export const PomodorosToday: React.FC = () => {
   const todayPomodoros = filterToday(globalPomodoros);
   const todayCount = todayPomodoros.length;
 
-  if (todayCount === 0) return null;
-
   return (
     <div className={styles.wrapper}>
-      <Text variant="label" className={styles.inline}>
-        #
-        <Text variant="body" className={styles.inline}>
-          {todayCount}
+      {todayCount > 0 ? (
+        <Text variant="label" className={styles.inline}>
+          #
+          <Text variant="body" className={styles.inline}>
+            {todayCount}
+          </Text>
         </Text>
-      </Text>
+      ) : (
+        <Text variant="label" className={styles.inline}>
+          &nbsp;
+        </Text>
+      )}
     </div>
   );
 };
