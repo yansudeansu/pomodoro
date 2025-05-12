@@ -1,8 +1,8 @@
 import React from 'react';
 import { Checkbox } from '../../atoms/Checkbox/Checkbox';
 import { IconButton } from '../../atoms/IconButton/IconButton';
-import { Text } from '../../atoms/Text/Text';
 import { AppIcons } from '../../atoms/Icons/Icons';
+import { Input } from '../../atoms/Input/Input';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
 import styles from './TaskList.module.css';
 
@@ -27,6 +27,10 @@ export const TaskList: React.FC = () => {
     );
   };
 
+  const handleTitleChange = (id: string, value: string) => {
+    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, title: value } : task)));
+  };
+
   return (
     <div className={styles.list}>
       {tasks.map((task) => {
@@ -37,17 +41,21 @@ export const TaskList: React.FC = () => {
         return (
           <div key={task.id} className={styles.task}>
             <div className={styles.left}>
-              <label htmlFor={checkboxId} className={styles.taskContent}>
+              <div className={styles.taskContent}>
                 <Checkbox
                   id={checkboxId}
                   checked={task.completed}
                   onChange={() => toggleTask(task.id)}
                   mode={mode}
                 />
-                <Text variant="body" className={task.completed ? styles.completed : ''}>
-                  {task.title}
-                </Text>
-              </label>
+                <Input
+                  value={task.title}
+                  size={task.title.length || 1}
+                  onChange={(e) => handleTitleChange(task.id, e.target.value)}
+                  borderless
+                  className={task.completed ? styles.completed : ''}
+                />
+              </div>
 
               <div className={styles.pomodoroWrapper}>
                 <div className={styles.pomodoroIcons}>

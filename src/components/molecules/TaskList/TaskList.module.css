@@ -28,14 +28,12 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  flex: 1;
 }
 
 .taskContent {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  cursor: pointer;
 }
 
 .completed {
