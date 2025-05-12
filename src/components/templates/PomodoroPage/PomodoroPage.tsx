@@ -5,16 +5,19 @@ import { Toast, ToastProps } from '../../atoms/Toast/Toast';
 import { PomodorosToday } from '../../molecules/PomodorosToday/PomodorosToday';
 import { PomodoroTimer } from '../../organisms/PomodoroTimer/PomodoroTimer';
 import { TaskManager } from '../../organisms/TaskManager/TaskManager';
+import { WeeklyChart } from '../../molecules/WeeklyChart/WeeklyChart';
+import { getWeeklySummary } from '../../../utils/dates';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
 import { Task } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const PomodoroPage: React.FC = () => {
-  const { setTasks, mode } = usePomodoroContext();
+  const { setTasks, mode, globalPomodoros } = usePomodoroContext();
   const [inputValue, setInputValue] = useState('');
   const [toast, setToast] = useState<null | ToastProps>(null);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deleteIndexRef = useRef<number>(-1);
+  const [showChart, setShowChart] = useState(false);
 
   const handleAddTask = () => {
     const trimmed = inputValue.trim();
@@ -95,7 +98,17 @@ export const PomodoroPage: React.FC = () => {
   return (
     <>
       {toast && <Toast {...toast} />}
-      <Header />
+      <Header onChartClick={() => setShowChart((prev) => !prev)} />
+      {showChart && (
+        <div className={styles.chartWrapper}>
+          <WeeklyChart
+            data={getWeeklySummary(globalPomodoros).map((d) => ({
+              name: d.date.toLocaleDateString(undefined, { weekday: 'short' }),
+              Pomodoros: d.count,
+            }))}
+          />
+        </div>
+      )}
       <main className={`${styles.page} ${styles[mode]}`}>
         <PomodoroTimer />
         <PomodorosToday />

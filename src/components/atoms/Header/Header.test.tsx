@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Header } from './Header';
 
 describe('Header', () => {
@@ -18,5 +19,27 @@ describe('Header', () => {
     const link = screen.getByRole('link', { name: /github/i });
     const icon = link.querySelector('svg');
     expect(icon).toBeInTheDocument();
+  });
+
+  it('renders the chart icon button and handles click', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<Header onChartClick={onClick} />);
+
+    const button = screen.getByRole('button', { name: /show weekly statistics/i });
+    expect(button).toBeInTheDocument();
+
+    await user.click(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders without onChartClick and does not crash on click', async () => {
+    const user = userEvent.setup();
+    render(<Header />);
+
+    const button = screen.getByRole('button', { name: /show weekly statistics/i });
+    expect(button).toBeInTheDocument();
+
+    await user.click(button);
   });
 });

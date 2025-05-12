@@ -6,7 +6,7 @@ export interface IconButtonProps {
   onClick: () => void;
   label?: string;
   size?: 'small' | 'medium';
-  variant?: 'default' | 'success' | 'danger';
+  variant?: 'default' | 'success' | 'danger' | 'link';
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({

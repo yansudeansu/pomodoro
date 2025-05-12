@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  BarChart3,
 } from 'lucide-react';
 
 export const AppIcons = {
@@ -28,6 +29,7 @@ export const AppIcons = {
   chevronDown: ChevronDown,
   chevronUp: ChevronUp,
   close: X,
+  chart: BarChart3,
 };
 
 export type IconName = keyof typeof AppIcons;

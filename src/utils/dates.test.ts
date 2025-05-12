@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { isSameDay, filterToday } from './dates';
+import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
+import { isSameDay, filterToday, getWeeklySummary } from './dates';
 
 describe('isSameDay', () => {
   it('returns true for same date', () => {
@@ -48,5 +48,61 @@ describe('filterToday', () => {
   it('returns empty array when no entries match today', () => {
     const result = filterToday([{ id: '3', completedAt: yesterday.toISOString() }]);
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('getWeeklySummary', () => {
+  const mockToday = new Date('2025-05-14T12:00:00.000Z'); // Tuesday
+
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(mockToday);
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns 7 days starting from Monday', () => {
+    const summary = getWeeklySummary([]);
+    expect(summary).toHaveLength(7);
+    expect(summary[0].date.getDay()).toBe(1); // Monday
+    expect(summary[6].date.getDay()).toBe(0); // Sunday
+  });
+
+  it('counts completed entries on the correct day', () => {
+    const entries = [
+      { completedAt: '2025-05-13T10:00:00.000Z' }, // Tue
+      { completedAt: '2025-05-13T11:00:00.000Z' }, // Tue
+      { completedAt: '2025-05-14T12:00:00.000Z' }, // Wed
+    ];
+    const summary = getWeeklySummary(entries);
+
+    const tuesday = summary.find((d) => d.date.toISOString().startsWith('2025-05-13'));
+    const wednesday = summary.find((d) => d.date.toISOString().startsWith('2025-05-14'));
+
+    expect(tuesday?.count).toBe(2);
+    expect(wednesday?.count).toBe(1);
+  });
+
+  it('returns zero count for days with no entries', () => {
+    const entries = [
+      { completedAt: '2025-05-12T08:00:00.000Z' }, // Mon
+    ];
+    const summary = getWeeklySummary(entries);
+
+    const counts = summary.map((d) => d.count);
+    expect(counts.filter((c) => c === 0).length).toBe(6);
+    expect(counts.filter((c) => c === 1).length).toBe(1);
+  });
+
+  it('ignores entries outside the current week', () => {
+    const entries = [
+      { completedAt: '2025-05-11T23:59:59.000Z' }, // Sunday before
+      { completedAt: '2025-05-19T00:00:00.000Z' }, // Next Monday
+    ];
+    const summary = getWeeklySummary(entries);
+    const total = summary.reduce((sum, d) => sum + d.count, 0);
+    expect(total).toBe(0);
   });
 });

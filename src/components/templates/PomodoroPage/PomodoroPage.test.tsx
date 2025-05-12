@@ -316,7 +316,7 @@ describe('PomodoroPage', () => {
     const setTimeoutMock = vi
       .spyOn(global, 'setTimeout')
       .mockImplementation((fn: () => void): ReturnType<typeof setTimeout> => {
-        fn(); // fire immediately
+        fn();
         return 0 as unknown as ReturnType<typeof setTimeout>;
       });
     const clearTimeoutMock = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
@@ -350,7 +350,6 @@ describe('PomodoroPage', () => {
 
     expect(latestToastMessage).toMatch(/10–16 Pomodoros/);
 
-    // Wait for toast removal after React handles state update
     await Promise.resolve();
 
     expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
@@ -432,5 +431,21 @@ describe('PomodoroPage', () => {
     expect(clearTimeoutSpy).toHaveBeenCalled();
 
     clearTimeoutSpy.mockRestore();
+  });
+
+  it('toggles the WeeklyChart visibility when the chart button is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(<PomodoroPage />);
+
+    expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();
+
+    const chartButton = screen.getByRole('button', { name: /show weekly statistics/i });
+    await user.click(chartButton);
+
+    expect(screen.getByTestId('weekly-chart')).toBeInTheDocument();
+
+    await user.click(chartButton);
+    expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();
   });
 });
