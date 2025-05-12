@@ -56,12 +56,20 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const incrementCompletedPomodoros = () => {
     if (!activeTaskId) return;
+
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === activeTaskId
-          ? { ...task, completedPomodoros: task.completedPomodoros + 1 }
-          : task
-      )
+      prev.map((task) => {
+        if (task.id !== activeTaskId) return task;
+
+        const newCompleted = task.completedPomodoros + 1;
+        const isNowFullyComplete = newCompleted >= task.pomodoros;
+
+        return {
+          ...task,
+          completedPomodoros: newCompleted,
+          completed: isNowFullyComplete ? true : task.completed,
+        };
+      })
     );
   };
 

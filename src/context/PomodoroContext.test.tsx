@@ -56,6 +56,23 @@ const TestComponent = () => {
       <button onClick={resetTimer}>Reset</button>
       <button onClick={() => setActiveTaskId('1')}>Set Active Task</button>
       <button onClick={incrementCompletedPomodoros}>Increment Pomodoro</button>
+      <button
+        data-testid="test-incomplete-completion"
+        onClick={() => {
+          setTasks([
+            {
+              id: '1',
+              title: 'Incomplete task',
+              completed: false,
+              pomodoros: 3,
+              completedPomodoros: 2,
+            },
+          ]);
+          setActiveTaskId('1');
+        }}
+      >
+        Set Incomplete Task
+      </button>
     </div>
   );
 };
@@ -158,5 +175,15 @@ describe('PomodoroContext', () => {
     renderWithProvider();
 
     expect(screen.getByTestId('tasks-count')).toHaveTextContent('tasks: 0');
+  });
+
+  it('does not complete the task if completedPomodoros is still less than pomodoros', async () => {
+    const user = userEvent.setup();
+    renderWithProvider();
+
+    await user.click(screen.getByTestId('test-incomplete-completion'));
+    await user.click(screen.getByText(/Increment Pomodoro/i));
+
+    expect(screen.getByTestId('completed-pomodoros')).toHaveTextContent('completedPomodoros: 3');
   });
 });

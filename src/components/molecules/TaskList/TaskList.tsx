@@ -5,13 +5,28 @@ import { AppIcons } from '../../atoms/Icons/Icons';
 import { Input } from '../../atoms/Input/Input';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
 import styles from './TaskList.module.css';
+import { UIOnlyTask } from '../../../types';
 
 export const TaskList: React.FC = () => {
   const { tasks, setTasks, mode } = usePomodoroContext();
 
   const toggleTask = (id: string) => {
     setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
+      prev.map((task) => {
+        const t = task as UIOnlyTask;
+        if (t.id !== id) return t;
+
+        const willBeCompleted = !t.completed;
+
+        return {
+          ...t,
+          completed: willBeCompleted,
+          completedPomodoros: willBeCompleted
+            ? t.pomodoros
+            : Math.min(t.completedPomodoros, t.previousCompletedPomodoros ?? 0),
+          previousCompletedPomodoros: willBeCompleted ? t.completedPomodoros : undefined,
+        };
+      })
     );
   };
 
@@ -22,11 +37,16 @@ export const TaskList: React.FC = () => {
   const addPomodoro = (id: string) => {
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id && task.pomodoros < 4 ? { ...task, pomodoros: task.pomodoros + 1 } : task
+        task.id === id && task.pomodoros < 4
+          ? {
+              ...task,
+              pomodoros: task.pomodoros + 1,
+              completed: false,
+            }
+          : task
       )
     );
   };
-
   const handleTitleChange = (id: string, value: string) => {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, title: value } : task)));
   };
@@ -60,7 +80,10 @@ export const TaskList: React.FC = () => {
               <div className={styles.pomodoroWrapper}>
                 <div className={styles.pomodoroIcons}>
                   {[...Array(task.pomodoros)].map((_, i) => {
-                    const Icon = i < task.completedPomodoros ? PomodoroDoneIcon : PomodoroIcon;
+                    const Icon =
+                      task.completed || i < task.completedPomodoros
+                        ? PomodoroDoneIcon
+                        : PomodoroIcon;
                     return <Icon key={i} size={16} />;
                   })}
                 </div>
