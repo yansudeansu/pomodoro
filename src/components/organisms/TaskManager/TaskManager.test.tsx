@@ -36,6 +36,8 @@ beforeEach(() => {
     activeTaskId: null,
     setActiveTaskId: vi.fn(),
     incrementCompletedPomodoros: vi.fn(),
+    globalPomodoros: [],
+    setGlobalPomodoros: vi.fn(),
   } satisfies PomodoroContextType);
 });
 
@@ -46,6 +48,7 @@ describe('TaskManager', () => {
       onInputChange: vi.fn(),
       onAddTask: vi.fn(),
       onKeyDown: vi.fn(),
+      onDeleteTask: vi.fn(),
       ...props,
     };
 

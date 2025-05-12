@@ -29,3 +29,12 @@
 .success {
   color: var(--color-success);
 }
+
+.link {
+  color: var(--color-primary);
+  transition: color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--color-white);
+}
