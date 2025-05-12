@@ -31,7 +31,6 @@ const meta: Meta<PomodorosTodayStoryProps> = {
 export default meta;
 type Story = StoryObj<PomodorosTodayStoryProps>;
 
-// Create a wrapper story component that injects mocked context based on `count`
 export const Default: Story = {
   render: (args) => {
     const now = new Date().toISOString();
@@ -50,6 +49,6 @@ export const Default: Story = {
     );
   },
   args: {
-    count: 2,
+    count: 5,
   },
 };
