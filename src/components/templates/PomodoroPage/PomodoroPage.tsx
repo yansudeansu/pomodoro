@@ -28,7 +28,30 @@ export const PomodoroPage: React.FC = () => {
       completedPomodoros: 0,
     };
 
-    setTasks((prev) => [...prev, newTask]);
+    setTasks((prev) => {
+      const updated = [...prev, newTask];
+
+      if (updated.length > 16) {
+        if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+
+        setToast({
+          message:
+            'That’s a lot! A full focus day usually includes 10–16 Pomodoros. Are you sure you want this many?',
+          onClose: () => {
+            if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+            setToast(null);
+          },
+        });
+
+        toastTimeoutRef.current = setTimeout(() => {
+          setToast(null);
+          toastTimeoutRef.current = null;
+        }, 5000);
+      }
+
+      return updated;
+    });
+
     setInputValue('');
   };
 

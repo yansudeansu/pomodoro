@@ -6,6 +6,8 @@ import { usePomodoroContext, PomodoroContextType } from '../../../context/Pomodo
 import { Task } from '../../../types';
 import { ToastProps } from '../../atoms/Toast/Toast';
 
+let latestToastMessage = '';
+
 vi.mock('../../../context/PomodoroContext', async () => {
   const actual = await vi.importActual<typeof import('../../../context/PomodoroContext')>(
     '../../../context/PomodoroContext'
@@ -25,13 +27,16 @@ vi.mock('../../organisms/PomodoroTimer/PomodoroTimer', () => ({
 }));
 
 vi.mock('../../atoms/Toast/Toast', () => ({
-  Toast: ({ message, actionLabel, onAction, onClose }: ToastProps) => (
-    <div data-testid="toast">
-      <span>{message}</span>
-      {actionLabel && <button onClick={onAction}>{actionLabel}</button>}
-      {onClose && <button onClick={onClose}>Close toast</button>}
-    </div>
-  ),
+  Toast: ({ message, actionLabel, onAction, onClose }: ToastProps) => {
+    latestToastMessage = message;
+    return (
+      <div data-testid="toast">
+        <span>{message}</span>
+        {actionLabel && <button onClick={onAction}>{actionLabel}</button>}
+        {onClose && <button onClick={onClose}>Close toast</button>}
+      </div>
+    );
+  },
 }));
 
 const mockedUsePomodoroContext = vi.mocked(usePomodoroContext);
@@ -273,5 +278,159 @@ describe('PomodoroPage', () => {
     await user.click(screen.getAllByLabelText(/delete task/i)[0]);
 
     expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows toast if more than 16 tasks are added', async () => {
+    const user = userEvent.setup();
+
+    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
+      id: `${i}`,
+      title: `Task ${i}`,
+      completed: false,
+      pomodoros: 1,
+      completedPomodoros: 0,
+    }));
+
+    let currentTasks = [...mockTasks];
+
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        tasks: currentTasks,
+        setTasks: (updater) => {
+          const updated = typeof updater === 'function' ? updater(currentTasks) : updater;
+          currentTasks = updated;
+        },
+      })
+    );
+
+    render(<PomodoroPage />);
+
+    const input = screen.getByPlaceholderText(/add a new task/i);
+    await user.type(input, 'Extra Task');
+    await user.click(screen.getByTestId('add-task-button'));
+
+    expect(await screen.findByTestId('toast')).toHaveTextContent(/10–16 Pomodoros/);
+  });
+
+  it('auto-dismisses the 17+ tasks toast without delay (mocked timeout)', async () => {
+    const setTimeoutMock = vi
+      .spyOn(global, 'setTimeout')
+      .mockImplementation((fn: () => void): ReturnType<typeof setTimeout> => {
+        fn(); // fire immediately
+        return 0 as unknown as ReturnType<typeof setTimeout>;
+      });
+    const clearTimeoutMock = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
+
+    const user = userEvent.setup();
+
+    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
+      id: `${i}`,
+      title: `Task ${i}`,
+      completed: false,
+      pomodoros: 1,
+      completedPomodoros: 0,
+    }));
+
+    let currentTasks = [...mockTasks];
+
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        tasks: currentTasks,
+        setTasks: (updater) => {
+          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
+        },
+      })
+    );
+
+    render(<PomodoroPage />);
+
+    const input = screen.getByPlaceholderText(/add a new task/i);
+    await user.type(input, 'Extra Task');
+    await user.click(screen.getByTestId('add-task-button'));
+
+    expect(latestToastMessage).toMatch(/10–16 Pomodoros/);
+
+    // Wait for toast removal after React handles state update
+    await Promise.resolve();
+
+    expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
+
+    setTimeoutMock.mockRestore();
+    clearTimeoutMock.mockRestore();
+  });
+
+  it('closes the 17+ tasks toast when close button is clicked', async () => {
+    const user = userEvent.setup();
+
+    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
+      id: `${i}`,
+      title: `Task ${i}`,
+      completed: false,
+      pomodoros: 1,
+      completedPomodoros: 0,
+    }));
+
+    let currentTasks = [...mockTasks];
+
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        tasks: currentTasks,
+        setTasks: (updater) => {
+          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
+        },
+      })
+    );
+
+    render(<PomodoroPage />);
+
+    const input = screen.getByPlaceholderText(/add a new task/i);
+    await user.type(input, 'Extra Task');
+    await user.click(screen.getByTestId('add-task-button'));
+
+    const toast = await screen.findByTestId('toast');
+    expect(toast).toHaveTextContent(/10–16 Pomodoros/);
+
+    const closeButton = screen.getByRole('button', { name: /close toast/i });
+    await user.click(closeButton);
+
+    expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
+  });
+
+  it('clears the previous toast timeout when showing a new 17+ tasks toast', async () => {
+    const user = userEvent.setup();
+    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
+
+    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
+      id: `${i}`,
+      title: `Task ${i}`,
+      completed: false,
+      pomodoros: 1,
+      completedPomodoros: 0,
+    }));
+
+    let currentTasks = [...mockTasks];
+
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        tasks: currentTasks,
+        setTasks: (updater) => {
+          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
+        },
+      })
+    );
+
+    render(<PomodoroPage />);
+
+    const input = screen.getByPlaceholderText(/add a new task/i);
+
+    await user.type(input, 'Extra Task 1');
+    await user.click(screen.getByTestId('add-task-button'));
+
+    await user.type(input, 'Extra Task 2');
+    await user.click(screen.getByTestId('add-task-button'));
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+
+    clearTimeoutSpy.mockRestore();
   });
 });

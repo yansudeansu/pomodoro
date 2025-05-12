@@ -32,7 +32,9 @@ export const TaskManager: React.FC<TaskManagerProps> = ({
           placeholder="Add a new task..."
           mode={mode}
         />
-        <Button onClick={onAddTask}>Add</Button>
+        <Button onClick={onAddTask} data-testid="add-task-button">
+          Add
+        </Button>
       </div>
       <TaskList onDeleteTask={onDeleteTask} />
     </div>

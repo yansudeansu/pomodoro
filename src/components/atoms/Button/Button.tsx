@@ -17,6 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   size,
   variant,
+  ...props
 }) => {
   const sizeClass = styles[size ?? 'default'];
   const variantClass = styles[variant ?? 'default'];
@@ -24,6 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={`${styles.button} ${sizeClass} ${variantClass}`}
+      {...props}
       onClick={onClick}
       type={type}
       disabled={disabled}
