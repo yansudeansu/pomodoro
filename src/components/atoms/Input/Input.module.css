@@ -44,7 +44,7 @@
 }
 
 @media (max-width: 400px) {
-  .input {
+  input.borderless {
     max-width: 100px;
   }
 }

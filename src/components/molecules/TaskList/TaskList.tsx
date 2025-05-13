@@ -163,15 +163,6 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                 </div>
 
                 <div className={styles.pomodoroWrapper}>
-                  <div className={styles.pomodoroIcons}>
-                    {[...Array(task.pomodoros)].map((_, i) => {
-                      const Icon =
-                        task.completed || i < task.completedPomodoros
-                          ? PomodoroDoneIcon
-                          : PomodoroIcon;
-                      return <Icon key={i} size={16} />;
-                    })}
-                  </div>
                   {task.pomodoros > 1 && (
                     <IconButton
                       icon="remove"
@@ -181,6 +172,15 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                       onClick={() => removePomodoro(task.id)}
                     />
                   )}
+                  <div className={styles.pomodoroIcons}>
+                    {[...Array(task.pomodoros)].map((_, i) => {
+                      const Icon =
+                        task.completed || i < task.completedPomodoros
+                          ? PomodoroDoneIcon
+                          : PomodoroIcon;
+                      return <Icon key={i} size={16} />;
+                    })}
+                  </div>
                   {task.pomodoros < 4 && (
                     <IconButton
                       icon="add"
