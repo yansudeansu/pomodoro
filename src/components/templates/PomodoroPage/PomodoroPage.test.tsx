@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PomodoroPage } from './PomodoroPage';
 import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext';
@@ -443,7 +443,7 @@ describe('PomodoroPage', () => {
     const chartButton = screen.getByRole('button', { name: /show weekly statistics/i });
     await user.click(chartButton);
 
-    expect(screen.getByTestId('weekly-chart')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('weekly-chart')).toBeInTheDocument());
 
     await user.click(chartButton);
     expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();

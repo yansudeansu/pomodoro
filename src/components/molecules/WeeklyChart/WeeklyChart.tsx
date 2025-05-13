@@ -5,7 +5,7 @@ interface WeeklyChartProps {
   data: { name: string; Pomodoros: number }[];
 }
 
-export const WeeklyChart: React.FC<WeeklyChartProps> = ({ data }) => {
+const WeeklyChart: React.FC<WeeklyChartProps> = ({ data }) => {
   const getBarColor = (count: number) => {
     if (count >= 8) return 'var(--color-success)';
     if (count >= 4) return 'var(--color-warning)';
@@ -43,3 +43,5 @@ export const WeeklyChart: React.FC<WeeklyChartProps> = ({ data }) => {
     </div>
   );
 };
+
+export default WeeklyChart;

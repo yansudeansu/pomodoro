@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { WeeklyChart } from './WeeklyChart';
+import WeeklyChart from './WeeklyChart';
 
 const mockData = [
   { name: 'Mon', Pomodoros: 2 },

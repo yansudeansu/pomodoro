@@ -1,15 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, Suspense } from 'react';
 import styles from './PomodoroPage.module.css';
 import { Header } from '../../atoms/Header/Header';
 import { Toast, ToastProps } from '../../atoms/Toast/Toast';
 import { PomodorosToday } from '../../molecules/PomodorosToday/PomodorosToday';
 import { PomodoroTimer } from '../../organisms/PomodoroTimer/PomodoroTimer';
 import { TaskManager } from '../../organisms/TaskManager/TaskManager';
-import { WeeklyChart } from '../../molecules/WeeklyChart/WeeklyChart';
 import { getWeeklySummary } from '../../../utils/dates';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
 import { Task } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
+
+const LazyWeeklyChart = React.lazy(() => import('../../molecules/WeeklyChart/WeeklyChart'));
 
 export const PomodoroPage: React.FC = () => {
   const { setTasks, mode, globalPomodoros } = usePomodoroContext();
@@ -101,12 +102,14 @@ export const PomodoroPage: React.FC = () => {
       <Header onChartClick={() => setShowChart((prev) => !prev)} />
       {showChart && (
         <div className={styles.chartWrapper}>
-          <WeeklyChart
-            data={getWeeklySummary(globalPomodoros).map((d) => ({
-              name: d.date.toLocaleDateString(undefined, { weekday: 'short' }),
-              Pomodoros: d.count,
-            }))}
-          />
+          <Suspense fallback={<div style={{ height: 200 }}>Loading chart...</div>}>
+            <LazyWeeklyChart
+              data={getWeeklySummary(globalPomodoros).map((d) => ({
+                name: d.date.toLocaleDateString(undefined, { weekday: 'short' }),
+                Pomodoros: d.count,
+              }))}
+            />
+          </Suspense>
         </div>
       )}
       <main className={`${styles.page} ${styles[mode]}`}>
