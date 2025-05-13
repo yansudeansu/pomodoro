@@ -11,6 +11,7 @@
   font-family: var(--font-family-base);
   outline: none;
   transition: border-color var(--transition-fast);
+  max-width: 265px;
 }
 
 .input:focus {
