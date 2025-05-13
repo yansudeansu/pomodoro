@@ -69,3 +69,15 @@
 .pomodoroIcons svg {
   color: var(--color-highlight);
 }
+
+@media (max-width: 600px) {
+  .list {
+    max-width: 354px;
+  }
+}
+
+@media (max-width: 400px) {
+  .list {
+    max-width: 300px;
+  }
+}

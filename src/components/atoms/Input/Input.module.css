@@ -36,3 +36,15 @@
 .borderless:focus {
   border-color: var(--color-primary);
 }
+
+@media (max-width: 600px) {
+  .input {
+    max-width: 152px;
+  }
+}
+
+@media (max-width: 400px) {
+  .input {
+    max-width: 100px;
+  }
+}
