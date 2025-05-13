@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
-import { WeeklyChart } from './WeeklyChart';
+import WeeklyChart from './WeeklyChart';
 
 const mockData = [
   { name: 'Mon', Pomodoros: 0 },
