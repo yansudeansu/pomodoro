@@ -157,6 +157,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                     size={task.title.length || 1}
                     onChange={(e) => handleTitleChange(task.id, e.target.value)}
                     borderless
+                    width={'265px'}
                     className={task.completed ? styles.completed : ''}
                   />
                 </div>
