@@ -243,4 +243,175 @@ describe('PomodoroContext', () => {
 
     expect(screen.getByTestId('global-count')).toHaveTextContent('0');
   });
+
+  it('advances correctly when skipCycle is called from pomodoro mode', async () => {
+    const SkipTestComponent = () => {
+      const {
+        skipCycle,
+        setTasks,
+        setActiveTaskId,
+        setPomodoroCount,
+        globalPomodoros,
+        pomodoroCount,
+        mode,
+        isRunning,
+        timeLeft,
+      } = usePomodoroContext();
+
+      return (
+        <div>
+          <div data-testid="mode">{mode}</div>
+          <div data-testid="pomodoro-count">{pomodoroCount}</div>
+          <div data-testid="global-count">{globalPomodoros.length}</div>
+          <div data-testid="is-running">{isRunning.toString()}</div>
+          <div data-testid="time-left">{timeLeft}</div>
+          <button
+            onClick={() => {
+              setTasks([
+                {
+                  id: '1',
+                  title: 'Test',
+                  completed: false,
+                  pomodoros: 1,
+                  completedPomodoros: 0,
+                },
+              ]);
+              setActiveTaskId('1');
+              setPomodoroCount(3);
+            }}
+          >
+            Setup
+          </button>
+          <button onClick={skipCycle}>Skip</button>
+        </div>
+      );
+    };
+
+    render(
+      <PomodoroProvider>
+        <SkipTestComponent />
+      </PomodoroProvider>
+    );
+
+    const skipUser = userEvent.setup();
+
+    await skipUser.click(screen.getByText(/Setup/i));
+    await skipUser.click(screen.getByText(/Skip/i));
+
+    expect(screen.getByTestId('mode')).toHaveTextContent('long_break');
+    expect(screen.getByTestId('pomodoro-count')).toHaveTextContent('4');
+    expect(screen.getByTestId('global-count')).toHaveTextContent('1');
+    expect(Number(screen.getByTestId('time-left').textContent)).toBe(900);
+  });
+  it('advances to short_break when skipCycle is called from pomodoro mode and nextCount is not divisible by 4', async () => {
+    const SkipTestComponent = () => {
+      const {
+        skipCycle,
+        setTasks,
+        setActiveTaskId,
+        setPomodoroCount,
+        globalPomodoros,
+        pomodoroCount,
+        mode,
+        isRunning,
+        timeLeft,
+      } = usePomodoroContext();
+
+      return (
+        <div>
+          <div data-testid="mode">{mode}</div>
+          <div data-testid="pomodoro-count">{pomodoroCount}</div>
+          <div data-testid="global-count">{globalPomodoros.length}</div>
+          <div data-testid="is-running">{isRunning.toString()}</div>
+          <div data-testid="time-left">{timeLeft}</div>
+          <button
+            onClick={() => {
+              setTasks([
+                {
+                  id: '1',
+                  title: 'Test',
+                  completed: false,
+                  pomodoros: 1,
+                  completedPomodoros: 0,
+                },
+              ]);
+              setActiveTaskId('1');
+              setPomodoroCount(1);
+            }}
+          >
+            Setup
+          </button>
+          <button onClick={skipCycle}>Skip</button>
+        </div>
+      );
+    };
+
+    render(
+      <PomodoroProvider>
+        <SkipTestComponent />
+      </PomodoroProvider>
+    );
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText(/Setup/i));
+    await user.click(screen.getByText(/Skip/i));
+
+    expect(screen.getByTestId('mode')).toHaveTextContent('short_break');
+    expect(screen.getByTestId('pomodoro-count')).toHaveTextContent('2');
+    expect(screen.getByTestId('global-count')).toHaveTextContent('2');
+    expect(screen.getByTestId('is-running')).toHaveTextContent('false');
+    expect(Number(screen.getByTestId('time-left').textContent)).toBe(300);
+  });
+
+  it('skips from break mode back to pomodoro and does not increment pomodoroCount or globalPomodoros', async () => {
+    const SkipFromBreakComponent = () => {
+      const {
+        skipCycle,
+        setPomodoroCount,
+        setMode,
+        globalPomodoros,
+        pomodoroCount,
+        mode,
+        isRunning,
+        timeLeft,
+      } = usePomodoroContext();
+
+      return (
+        <div>
+          <div data-testid="mode">{mode}</div>
+          <div data-testid="pomodoro-count">{pomodoroCount}</div>
+          <div data-testid="global-count">{globalPomodoros.length}</div>
+          <div data-testid="is-running">{isRunning.toString()}</div>
+          <div data-testid="time-left">{timeLeft}</div>
+          <button
+            onClick={() => {
+              setMode('short_break');
+              setPomodoroCount(2);
+            }}
+          >
+            Setup
+          </button>
+          <button onClick={skipCycle}>Skip</button>
+        </div>
+      );
+    };
+
+    render(
+      <PomodoroProvider>
+        <SkipFromBreakComponent />
+      </PomodoroProvider>
+    );
+
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText(/Setup/i));
+    await user.click(screen.getByText(/Skip/i));
+
+    expect(screen.getByTestId('mode')).toHaveTextContent('pomodoro');
+    expect(screen.getByTestId('pomodoro-count')).toHaveTextContent('2');
+    expect(screen.getByTestId('global-count')).toHaveTextContent('2');
+    expect(screen.getByTestId('is-running')).toHaveTextContent('false');
+    expect(Number(screen.getByTestId('time-left').textContent)).toBe(1500);
+  });
 });

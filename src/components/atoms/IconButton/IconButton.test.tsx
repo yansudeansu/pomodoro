@@ -40,4 +40,24 @@ describe('IconButton', () => {
     const button = screen.getByLabelText('Remove item');
     expect(button).toBeInTheDocument();
   });
+
+  it('applies "big" size class and sets icon size to 24', () => {
+    render(<IconButton icon="add" onClick={() => {}} size="big" />);
+    const button = screen.getByRole('button');
+    expect(button.className).toContain('big');
+  });
+
+  it('renders as disabled and does not call onClick', async () => {
+    const user = userEvent.setup();
+    const handleClick = vi.fn();
+
+    render(<IconButton icon="add" onClick={handleClick} disabled />);
+    const button = screen.getByRole('button');
+
+    expect(button).toBeDisabled();
+    expect(button.className).toContain('disabled');
+
+    await user.click(button);
+    expect(handleClick).not.toHaveBeenCalled();
+  });
 });

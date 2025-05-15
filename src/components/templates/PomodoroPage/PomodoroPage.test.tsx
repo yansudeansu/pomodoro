@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PomodoroPage } from './PomodoroPage';
 import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext';
@@ -39,6 +39,10 @@ vi.mock('../../atoms/Toast/Toast', () => ({
   },
 }));
 
+vi.mock('../../molecules/WeeklyChart/WeeklyChart', () => ({
+  default: () => <div data-testid="weekly-chart">Mocked Chart</div>,
+}));
+
 const mockedUsePomodoroContext = vi.mocked(usePomodoroContext);
 
 const mockSetTasks = vi.fn();
@@ -60,6 +64,7 @@ const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroCon
   activeTaskId: null,
   setActiveTaskId: vi.fn(),
   incrementCompletedPomodoros: vi.fn(),
+  skipCycle: vi.fn(),
   ...overrides,
 });
 
@@ -173,14 +178,8 @@ describe('PomodoroPage', () => {
     expect(currentTasks).toContainEqual(taskToDelete);
   });
 
-  it('dismisses toast automatically without delay (mocked timeout)', () => {
-    const setTimeoutMock = vi
-      .spyOn(global, 'setTimeout')
-      .mockImplementation((fn: () => void): ReturnType<typeof setTimeout> => {
-        fn();
-        return 0 as unknown as ReturnType<typeof setTimeout>;
-      });
-    const clearTimeoutMock = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
+  it('dismisses toast automatically without delay (mocked timeout)', async () => {
+    vi.useFakeTimers();
 
     const taskToDelete: Task = {
       id: '1',
@@ -191,6 +190,7 @@ describe('PomodoroPage', () => {
     };
 
     let currentTasks = [taskToDelete];
+
     mockedUsePomodoroContext.mockReturnValue(
       createMockContext({
         tasks: currentTasks,
@@ -201,12 +201,17 @@ describe('PomodoroPage', () => {
     );
 
     render(<PomodoroPage />);
-    screen.getByLabelText(/delete task/i).click();
+
+    await act(async () => {
+      screen.getByLabelText(/delete task/i).click();
+      vi.runAllTimers();
+    });
+
+    await act(() => Promise.resolve());
 
     expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
 
-    setTimeoutMock.mockRestore();
-    clearTimeoutMock.mockRestore();
+    vi.useRealTimers();
   });
 
   it('closes the toast when close button is clicked', async () => {
@@ -443,7 +448,8 @@ describe('PomodoroPage', () => {
     const chartButton = screen.getByRole('button', { name: /show weekly statistics/i });
     await user.click(chartButton);
 
-    await waitFor(() => expect(screen.getByTestId('weekly-chart')).toBeInTheDocument());
+    await screen.findByText(/loading chart/i);
+    expect(await screen.findByTestId('weekly-chart')).toBeInTheDocument();
 
     await user.click(chartButton);
     expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();

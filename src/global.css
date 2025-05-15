@@ -35,6 +35,8 @@
   --color-surface-default: rgba(225, 225, 225, 0.05);
   --color-surface-hover: rgba(225, 225, 225, 0.08);
   --color-tooltip-bg: #1e1e1e;
+  --color-toast-background: var(--color-tooltip-bg);
+  --color-modal-background: var(--color-tooltip-bg);
   --color-tooltip-text: #f5f5f5;
   --color-border: #cccccc;
   --color-border-muted: #aaaaaa;
