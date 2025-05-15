@@ -35,6 +35,8 @@ vi.mock('../../atoms/Icons/Icons', () => {
   const SplitIcon = () => <svg data-testid="split-icon" />;
   const ChevronDown = () => <svg data-testid="chevron-down" />;
   const ChevronUp = () => <svg data-testid="chevron-up" />;
+  const MoreHorizontal = () => <svg data-testid="more-horizontal" />;
+  const Close = () => <svg data-testid="close-icon" />;
 
   return {
     AppIcons: {
@@ -49,6 +51,8 @@ vi.mock('../../atoms/Icons/Icons', () => {
       split: SplitIcon,
       chevronDown: ChevronDown,
       chevronUp: ChevronUp,
+      moreHorizontal: MoreHorizontal,
+      close: Close,
     },
   };
 });
@@ -559,5 +563,214 @@ describe('TaskList', () => {
     expect(screen.getByDisplayValue('First')).toBeInTheDocument();
     expect(screen.queryByDisplayValue('Second')).not.toBeInTheDocument();
     expect(screen.queryByDisplayValue('Third')).not.toBeInTheDocument();
+  });
+
+  it('opens and interacts with modal actions on mobile', async () => {
+    const user = userEvent.setup();
+
+    vi.resetModules();
+    vi.doMock('../../../hooks/useMediaQuery', () => ({
+      useMediaQuery: () => true,
+    }));
+
+    const { TaskList } = await import('./TaskList');
+    const { PomodoroProvider } = await import('../../../context/PomodoroContext');
+    const { render, screen, within } = await import('@testing-library/react');
+
+    const tasks = [
+      {
+        id: '1',
+        title: 'Mobile Task',
+        completed: false,
+        pomodoros: 2,
+        completedPomodoros: 1,
+      },
+    ];
+
+    localStorage.setItem('pomodoro-tasks', JSON.stringify(tasks));
+    localStorage.setItem('global-pomodoros', JSON.stringify([]));
+
+    const onDeleteTask = vi.fn();
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    const { unmount } = render(<TaskList onDeleteTask={onDeleteTask} />, { wrapper });
+
+    const moreBtn = await screen.findByLabelText(/more options/i);
+    await user.click(moreBtn);
+
+    const modalTitle = await screen.findByText('Mobile Task');
+    expect(modalTitle).toBeInTheDocument();
+
+    const modalContent = modalTitle.closest(`.${styles.modalContent}`);
+    if (!(modalContent instanceof HTMLElement)) {
+      throw new Error('Modal content not found or not an HTMLElement');
+    }
+
+    const modal = within(modalContent);
+
+    const addButton = modal.getByLabelText(/add pomodoro/i);
+    await user.click(addButton);
+    expect(modal.getAllByTestId('pomodoro-icon')).toHaveLength(2);
+
+    const removeButton = modal.getByLabelText(/remove pomodoro/i);
+    await user.click(removeButton);
+    expect(modal.getAllByTestId('pomodoro-icon')).toHaveLength(1);
+
+    const deleteButton = modal.getByRole('button', { name: /delete task/i });
+    await user.click(deleteButton);
+
+    expect(onDeleteTask).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+
+    expect(screen.queryByText('Mobile Task')).not.toBeInTheDocument();
+
+    unmount();
+  });
+
+  it('does not render modal content if task is not found', async () => {
+    const user = userEvent.setup();
+
+    vi.resetModules();
+    vi.doMock('../../../hooks/useMediaQuery', () => ({
+      useMediaQuery: () => true,
+    }));
+
+    const { TaskList } = await import('./TaskList');
+    const { PomodoroProvider, usePomodoroContext } = await import(
+      '../../../context/PomodoroContext'
+    );
+    const { render, screen } = await import('@testing-library/react');
+
+    const ghostTask = {
+      id: 'ghost-task',
+      title: 'Ghost Task',
+      completed: false,
+      pomodoros: 2,
+      completedPomodoros: 1,
+    };
+
+    localStorage.setItem('pomodoro-tasks', JSON.stringify([ghostTask]));
+    localStorage.setItem('global-pomodoros', JSON.stringify([]));
+
+    const Wrapper = () => {
+      const { setTasks } = usePomodoroContext();
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          act(() => {
+            setTasks([]);
+          });
+        }, 100);
+        // eslint-disable-next-line react-hooks/react-compiler
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return <TaskList onDeleteTask={() => {}} />;
+    };
+
+    render(
+      <PomodoroProvider>
+        <Wrapper />
+      </PomodoroProvider>
+    );
+
+    const moreBtn = await screen.findByLabelText(/more options/i);
+    await user.click(moreBtn);
+
+    await new Promise((r) => setTimeout(r, 300));
+
+    expect(screen.queryByText('Ghost Task')).not.toBeInTheDocument();
+    expect(document.querySelector(`.${styles.modalContent}`)).toBeNull();
+  });
+
+  it('closes the modal via the close icon button', async () => {
+    const user = userEvent.setup();
+
+    vi.resetModules();
+    vi.doMock('../../../hooks/useMediaQuery', () => ({
+      useMediaQuery: () => true,
+    }));
+
+    const { TaskList } = await import('./TaskList');
+    const { PomodoroProvider } = await import('../../../context/PomodoroContext');
+    const { render, screen } = await import('@testing-library/react');
+
+    const tasks = [
+      {
+        id: '1',
+        title: 'Modal Close Test Task',
+        completed: false,
+        pomodoros: 2,
+        completedPomodoros: 1,
+      },
+    ];
+
+    localStorage.setItem('pomodoro-tasks', JSON.stringify(tasks));
+    localStorage.setItem('global-pomodoros', JSON.stringify([]));
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    render(<TaskList onDeleteTask={() => {}} />, { wrapper });
+
+    const moreBtn = await screen.findByLabelText(/more options/i);
+    await user.click(moreBtn);
+
+    const closeBtn = await screen.findByLabelText(/close/i);
+    await user.click(closeBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Modal Close Test Task')).not.toBeInTheDocument();
+    });
+  });
+
+  it('closes the modal via the modal overlay (onClose prop)', async () => {
+    const user = userEvent.setup();
+
+    vi.resetModules();
+    vi.doMock('../../../hooks/useMediaQuery', () => ({
+      useMediaQuery: () => true,
+    }));
+
+    const { TaskList } = await import('./TaskList');
+    const { PomodoroProvider } = await import('../../../context/PomodoroContext');
+    const { render, screen, fireEvent } = await import('@testing-library/react');
+
+    const tasks = [
+      {
+        id: '1',
+        title: 'Overlay Close Task',
+        completed: false,
+        pomodoros: 2,
+        completedPomodoros: 1,
+      },
+    ];
+
+    localStorage.setItem('pomodoro-tasks', JSON.stringify(tasks));
+    localStorage.setItem('global-pomodoros', JSON.stringify([]));
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    render(<TaskList onDeleteTask={() => {}} />, { wrapper });
+
+    const moreBtn = await screen.findByLabelText(/more options/i);
+    await user.click(moreBtn);
+
+    const backdrop = await screen.findByTestId('modal-backdrop');
+    fireEvent.click(backdrop);
+    if (backdrop) {
+      fireEvent.click(backdrop);
+    } else {
+      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+    }
+
+    await waitFor(() => {
+      expect(screen.queryByText('Overlay Close Task')).not.toBeInTheDocument();
+    });
   });
 });

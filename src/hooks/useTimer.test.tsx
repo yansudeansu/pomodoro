@@ -213,3 +213,133 @@ describe('useTimer', () => {
     });
   });
 });
+
+describe('useTimer wake lock integration', () => {
+  const requestMock = vi.fn();
+  const releaseMock = vi.fn();
+
+  beforeEach(async () => {
+    vi.resetModules();
+
+    vi.doMock('../hooks/useWakeLock', () => ({
+      useWakeLock: () => ({
+        request: requestMock,
+        release: releaseMock,
+      }),
+    }));
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls wake lock request and release appropriately', async () => {
+    const { useTimer } = await import('./useTimer');
+    const { usePomodoroContext } = await import('../context/PomodoroContext');
+    const { PomodoroProvider } = await import('../context/PomodoroContext');
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        useTimer();
+        return usePomodoroContext();
+      },
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.setIsRunning(true);
+    });
+
+    expect(requestMock).toHaveBeenCalled();
+
+    act(() => {
+      result.current.setIsRunning(false);
+    });
+
+    expect(releaseMock).toHaveBeenCalled();
+  });
+
+  it('calls onError when request throws', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const error = new Error('request failed');
+
+    vi.resetModules();
+    vi.doMock('../hooks/useWakeLock', () => ({
+      useWakeLock: ({ onError }: { onError: (err: Error, type: string) => void }) => ({
+        request: () => {
+          onError(error, 'request');
+        },
+        release: vi.fn(),
+      }),
+    }));
+
+    const { useTimer } = await import('./useTimer');
+    const { usePomodoroContext, PomodoroProvider } = await import('../context/PomodoroContext');
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        useTimer();
+        return usePomodoroContext();
+      },
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.setIsRunning(true);
+    });
+
+    expect(warnSpy).toHaveBeenCalledWith('[WakeLock request] request failed');
+    warnSpy.mockRestore();
+  });
+
+  it('calls onError when release throws', async () => {
+    vi.resetModules();
+
+    const error = new Error('release failed');
+
+    vi.doMock('../hooks/useWakeLock', () => ({
+      useWakeLock: ({ onError }: { onError: (err: Error, type: string) => void }) => ({
+        request: vi.fn(),
+        release: () => {
+          onError(error, 'release');
+        },
+      }),
+    }));
+
+    const { useTimer } = await import('./useTimer');
+    const { usePomodoroContext, PomodoroProvider } = await import('../context/PomodoroContext');
+
+    const originalWarn = console.warn;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation((msg, ...args) => {
+      if (/wake lock.*release/i.test(msg)) return;
+      originalWarn(msg, ...args);
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <PomodoroProvider>{children}</PomodoroProvider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        useTimer();
+        return usePomodoroContext();
+      },
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.setIsRunning(false);
+    });
+
+    expect(warnSpy).toHaveBeenCalledWith('[WakeLock release] release failed');
+    warnSpy.mockRestore();
+  });
+});
