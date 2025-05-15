@@ -70,6 +70,47 @@
   color: var(--color-highlight);
 }
 
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+  background-color: var(--color-modal-background);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.modalTitle {
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.closeButton {
+  align-self: flex-start;
+  margin-left: auto;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.modalDelete {
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 600px) {
   .list {
     max-width: 354px;

@@ -50,6 +50,7 @@ const createMockContext = (overrides: Partial<PomodoroContextType> = {}): Pomodo
   incrementCompletedPomodoros: vi.fn(),
   globalPomodoros: [],
   setGlobalPomodoros: vi.fn(),
+  skipCycle: vi.fn(),
   ...overrides,
 });
 

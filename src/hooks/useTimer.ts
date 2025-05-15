@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { usePomodoroContext } from '../context/PomodoroContext';
 import { playAlarm } from '../utils/sound';
+import { useWakeLock } from './useWakeLock';
 
 export function calculateRemainingTime(
   targetTime: number | null,
@@ -28,6 +29,9 @@ export const useTimer = () => {
   const alarmPlayedRef = useRef(false);
   const pomodoroHandledRef = useRef(false);
   const targetTimeRef = useRef<number | null>(null);
+  const { request, release } = useWakeLock({
+    onError: (err, type) => console.warn(`[WakeLock ${type}] ${err.message}`),
+  });
 
   const clearIntervalRef = () => {
     if (intervalRef.current) {
@@ -50,6 +54,8 @@ export const useTimer = () => {
     clearIntervalRef();
 
     if (isRunning) {
+      request();
+
       const now = Date.now();
       const duration = timeLeft;
       targetTimeRef.current = now + duration * 1000;
@@ -90,17 +96,23 @@ export const useTimer = () => {
           }
 
           clearIntervalRef();
+          release();
           setTimeLeft(0);
           setIsRunning(false);
           autoSwitchMode();
-          return;
+        } else {
+          setTimeLeft(remaining);
         }
-
-        setTimeLeft(remaining);
       }, 1000);
+    } else {
+      release();
     }
 
-    return clearIntervalRef;
+    return () => {
+      clearIntervalRef();
+      release();
+    };
+
     // eslint-disable-next-line react-hooks/react-compiler
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning]);

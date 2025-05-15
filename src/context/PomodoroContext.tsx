@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { GlobalPomodoro, Mode, Task } from '../types';
 
 export interface PomodoroContextType {
@@ -18,6 +19,7 @@ export interface PomodoroContextType {
   incrementCompletedPomodoros: () => void;
   globalPomodoros: GlobalPomodoro[];
   setGlobalPomodoros: React.Dispatch<React.SetStateAction<GlobalPomodoro[]>>;
+  skipCycle: () => void;
 }
 
 const PomodoroContext = createContext<PomodoroContextType | undefined>(undefined);
@@ -61,6 +63,29 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const handleSetMode = (newMode: Mode) => {
     setMode(newMode);
     setTimeLeft(MODE_DEFAULTS[newMode]);
+    setIsRunning(false);
+  };
+
+  const skipCycle = () => {
+    if (mode === 'pomodoro') {
+      incrementCompletedPomodoros();
+      setGlobalPomodoros((prev) => [
+        ...prev,
+        {
+          id: uuidv4(),
+          completedAt: new Date().toISOString(),
+        },
+      ]);
+    }
+
+    const nextCount = mode === 'pomodoro' ? pomodoroCount + 1 : pomodoroCount;
+    setPomodoroCount(nextCount);
+
+    const nextMode =
+      mode === 'pomodoro' ? (nextCount % 4 === 0 ? 'long_break' : 'short_break') : 'pomodoro';
+
+    setMode(nextMode);
+    setTimeLeft(MODE_DEFAULTS[nextMode]);
     setIsRunning(false);
   };
 
@@ -110,6 +135,7 @@ export const PomodoroProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         incrementCompletedPomodoros,
         globalPomodoros,
         setGlobalPomodoros,
+        skipCycle,
       }}
     >
       {children}

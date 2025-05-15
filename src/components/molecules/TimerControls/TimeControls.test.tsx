@@ -41,6 +41,7 @@ const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroCon
   incrementCompletedPomodoros: vi.fn(),
   globalPomodoros: [],
   setGlobalPomodoros: vi.fn(),
+  skipCycle: vi.fn(),
   ...overrides,
 });
 
@@ -80,7 +81,7 @@ describe('TimerControls', () => {
   it('calls playStartSound and starts timer', async () => {
     const user = userEvent.setup();
     render(<TimerControls />);
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('button', { name: /start/i }));
 
     expect(playStartSound).toHaveBeenCalled();
     expect(mockSetIsRunning).toHaveBeenCalledWith(true);
@@ -114,7 +115,7 @@ describe('TimerControls', () => {
     );
 
     render(<TimerControls />);
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('button', { name: /start/i }));
 
     expect(mockSetActiveTaskId).toHaveBeenCalledWith('2');
   });
@@ -147,8 +148,24 @@ describe('TimerControls', () => {
     );
 
     render(<TimerControls />);
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole('button', { name: /start/i }));
 
     expect(mockSetActiveTaskId).not.toHaveBeenCalled();
+  });
+
+  it('calls skipCycle when skip button is clicked', async () => {
+    const user = userEvent.setup();
+    const mockSkip = vi.fn();
+
+    mockedUsePomodoroContext.mockReturnValue(
+      createMockContext({
+        skipCycle: mockSkip,
+      })
+    );
+
+    render(<TimerControls />);
+    await user.click(screen.getByRole('button', { name: /skip ahead/i }));
+
+    expect(mockSkip).toHaveBeenCalled();
   });
 });

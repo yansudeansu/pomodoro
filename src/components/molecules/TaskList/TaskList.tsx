@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { Text } from '../../atoms/Text/Text';
 import { Checkbox } from '../../atoms/Checkbox/Checkbox';
 import { IconButton } from '../../atoms/IconButton/IconButton';
 import { AppIcons } from '../../atoms/Icons/Icons';
 import { Input } from '../../atoms/Input/Input';
+import { Button } from '../../atoms/Button/Button';
+import { Modal } from '../Modal/Modal';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
+import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { Task, UIOnlyTask } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './TaskList.module.css';
@@ -15,6 +19,8 @@ interface TaskListProps {
 export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
   const { tasks, setTasks, mode, setGlobalPomodoros } = usePomodoroContext();
   const [collapsed, setCollapsed] = useState(false);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
   const activeTasks = tasks.filter((t) => !t.completed);
   const lastCompleted = [...tasks].reverse().find((t) => t.completed);
@@ -123,6 +129,65 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, title: value } : task)));
   };
 
+  const renderModalContent = () => {
+    if (!activeTaskId) return null;
+
+    const task = tasks.find((t) => t.id === activeTaskId);
+    if (!task) return null;
+
+    const PomodoroIcon = AppIcons.sparkle;
+    const PomodoroDoneIcon = AppIcons.sparkles;
+
+    return (
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <div className={styles.modalTitleRow}>
+            <Text className={styles.modalTitle}>{task.title}</Text>
+            <div className={styles.pomodoroIcons}>
+              {[...Array(task.pomodoros)].map((_, i) => {
+                const Icon =
+                  task.completed || i < task.completedPomodoros ? PomodoroDoneIcon : PomodoroIcon;
+                return <Icon key={i} size={16} />;
+              })}
+            </div>
+          </div>
+          <IconButton icon="close" label="Close" size="big" onClick={() => setActiveTaskId(null)} />
+        </div>
+
+        <div className={styles.modalActions}>
+          <IconButton
+            icon="remove"
+            label="Remove pomodoro"
+            size="big"
+            variant="danger"
+            disabled={task.pomodoros <= 1}
+            onClick={() => removePomodoro(task.id)}
+          />
+          <IconButton
+            icon="add"
+            label="Add pomodoro"
+            size="big"
+            variant="success"
+            disabled={task.pomodoros >= 4}
+            onClick={() => addPomodoro(task.id)}
+          />
+        </div>
+
+        <div className={styles.modalDelete}>
+          <Button
+            size="default"
+            onClick={() => {
+              handleDelete(task);
+              setActiveTaskId(null);
+            }}
+          >
+            Delete Task
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.list}>
       {visibleTasks?.map((task, index) => {
@@ -157,13 +222,13 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                     size={task.title.length || 1}
                     onChange={(e) => handleTitleChange(task.id, e.target.value)}
                     borderless
-                    width={'265px'}
+                    width="265px"
                     className={task.completed ? styles.completed : ''}
                   />
                 </div>
 
                 <div className={styles.pomodoroWrapper}>
-                  {task.pomodoros > 1 && (
+                  {!isMobile && task.pomodoros > 1 && (
                     <IconButton
                       icon="remove"
                       label="Remove pomodoro"
@@ -181,7 +246,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                       return <Icon key={i} size={16} />;
                     })}
                   </div>
-                  {task.pomodoros < 4 && (
+                  {!isMobile && task.pomodoros < 4 && (
                     <IconButton
                       icon="add"
                       label="Add pomodoro"
@@ -193,17 +258,30 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                 </div>
               </div>
 
-              <IconButton
-                icon="trash"
-                label="Delete task"
-                size="small"
-                variant="danger"
-                onClick={() => handleDelete(task)}
-              />
+              {isMobile ? (
+                <IconButton
+                  icon="moreHorizontal"
+                  label="More options"
+                  size="small"
+                  onClick={() => setActiveTaskId(task.id)}
+                />
+              ) : (
+                <IconButton
+                  icon="trash"
+                  label="Delete task"
+                  size="small"
+                  variant="danger"
+                  onClick={() => handleDelete(task)}
+                />
+              )}
             </div>
           </div>
         );
       })}
+
+      <Modal isOpen={!!activeTaskId} onClose={() => setActiveTaskId(null)}>
+        {renderModalContent()}
+      </Modal>
     </div>
   );
 };

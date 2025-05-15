@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { InfoTooltip } from './InfoTooltip';
 
@@ -61,17 +61,20 @@ describe('InfoTooltip', () => {
     );
 
     const iconButton = screen.getByLabelText(/toggle info/i);
-    iconButton.focus();
-    await userEvent.click(iconButton);
 
-    const tooltipHeader = screen.getByText(/Pomodoro Planning Tips/i);
-    expect(tooltipHeader).toBeInTheDocument();
+    await act(async () => {
+      iconButton.focus();
+      await userEvent.click(iconButton);
+    });
 
-    // Trigger blur
+    expect(screen.getByText(/Pomodoro Planning Tips/i)).toBeInTheDocument();
+
     const outsideButton = screen.getByTestId('outside');
-    outsideButton.focus();
 
-    // Wait for DOM update
+    await act(async () => {
+      outsideButton.focus();
+    });
+
     await waitFor(() =>
       expect(screen.queryByText(/Pomodoro Planning Tips/i)).not.toBeInTheDocument()
     );
