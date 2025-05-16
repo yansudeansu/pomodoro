@@ -1,28 +1,31 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { playAlarm, playStartSound } from './sound';
 
-const playMock = vi.fn();
-
-class MockAudio {
-  play = playMock;
-}
+const playMock = vi.fn(() => Promise.resolve());
+const pauseMock = vi.fn();
 
 beforeEach(() => {
   playMock.mockClear();
+  pauseMock.mockClear();
 
-  globalThis.Audio = vi.fn(() => new MockAudio()) as unknown as typeof Audio;
+  vi.restoreAllMocks();
+
+  vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(playMock);
+  vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(pauseMock);
 });
 
 describe('sound', () => {
-  it('plays alarm sound', () => {
+  it('plays alarm sound and stops others', () => {
     playAlarm();
-    expect(globalThis.Audio).toHaveBeenCalledWith('/pomodoro/src/assets/alarm.mp3');
+
+    expect(pauseMock).toHaveBeenCalled();
     expect(playMock).toHaveBeenCalled();
   });
 
-  it('plays start sound', () => {
+  it('plays start sound and stops others', () => {
     playStartSound();
-    expect(globalThis.Audio).toHaveBeenCalledWith('/pomodoro/src/assets/start.mp3');
+
+    expect(pauseMock).toHaveBeenCalled();
     expect(playMock).toHaveBeenCalled();
   });
 });
