@@ -342,4 +342,46 @@ describe('useTimer wake lock integration', () => {
     expect(warnSpy).toHaveBeenCalledWith('[WakeLock release] release failed');
     warnSpy.mockRestore();
   });
+
+  it('triggers vibration when timer ends and vibration is supported', () => {
+    const vibrateMock = vi.fn();
+
+    Object.defineProperty(globalThis.navigator, 'vibrate', {
+      configurable: true,
+      writable: true,
+      value: vibrateMock,
+    });
+
+    class MockNotification {
+      static permission = 'granted';
+      constructor() {}
+    }
+
+    Object.defineProperty(globalThis, 'Notification', {
+      configurable: true,
+      writable: true,
+      value: MockNotification as unknown as typeof Notification,
+    });
+
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(() => Promise.resolve());
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+
+    const { result } = renderHook(
+      () => {
+        useTimer();
+        return usePomodoroContext();
+      },
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.setIsRunning(true);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1500 * 1000);
+    });
+
+    expect(vibrateMock).toHaveBeenCalledWith([500, 200, 500]);
+  });
 });
