@@ -72,10 +72,6 @@ export const useTimer = () => {
             alarmPlayedRef.current = true;
           }
 
-          if ('vibrate' in navigator) {
-            navigator.vibrate([500, 200, 500]);
-          }
-
           if (Notification.permission === 'granted') {
             new Notification("Time's up!", {
               body:
