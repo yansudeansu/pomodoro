@@ -168,22 +168,6 @@ describe('TaskList', () => {
     expect(screen.getAllByTestId('pomodoro-icon')).toHaveLength(2);
   });
 
-  it('does not show add button for task with pomodoros >= 4', () => {
-    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
-      tasks: [
-        {
-          id: '1',
-          title: 'Test Task',
-          completed: false,
-          pomodoros: 4,
-          completedPomodoros: 0,
-        },
-      ],
-    });
-    const buttons = screen.queryAllByLabelText(/add pomodoro/i);
-    expect(buttons.length).toBe(0);
-  });
-
   it('applies completed class conditionally', async () => {
     renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
       tasks: [

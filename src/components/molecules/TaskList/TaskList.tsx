@@ -25,12 +25,14 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
   const activeTasks = tasks.filter((t) => !t.completed);
   const lastCompleted = [...tasks].reverse().find((t) => t.completed);
 
+  const completedTasks = tasks.filter((t) => t.completed);
+
   const visibleTasks =
     tasks.length <= 1 || !collapsed
-      ? tasks
+      ? [...activeTasks, ...completedTasks]
       : activeTasks.length > 0
-        ? activeTasks.slice(0, 1)
-        : lastCompleted && [lastCompleted];
+        ? [activeTasks[0]]
+        : ([lastCompleted].filter(Boolean) as Task[]);
 
   const toggleTask = (id: string) => {
     const now = new Date().toISOString();
@@ -200,12 +202,14 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
           <div key={task.id} className={isFirstTask ? styles.taskRowWrapper : undefined}>
             {isFirstTask && (
               <div className={styles.chevronWrapper}>
-                <IconButton
-                  icon={collapsed ? 'chevronDown' : 'chevronUp'}
-                  onClick={() => setCollapsed((c) => !c)}
-                  label={collapsed ? 'Show all tasks' : 'Collapse tasks'}
-                  size="medium"
-                />
+                {!isMobile && (
+                  <IconButton
+                    icon={collapsed ? 'chevronDown' : 'chevronUp'}
+                    onClick={() => setCollapsed((c) => !c)}
+                    label={collapsed ? 'Show all tasks' : 'Collapse tasks'}
+                    size="medium"
+                  />
+                )}
               </div>
             )}
             <div className={styles.task}>
@@ -228,14 +232,25 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                 </div>
 
                 <div className={styles.pomodoroWrapper}>
-                  {!isMobile && task.pomodoros > 1 && (
-                    <IconButton
-                      icon="remove"
-                      label="Remove pomodoro"
-                      size="small"
-                      variant="danger"
-                      onClick={() => removePomodoro(task.id)}
-                    />
+                  {!isMobile && (
+                    <>
+                      <IconButton
+                        icon="remove"
+                        label="Remove pomodoro"
+                        size="small"
+                        variant="danger"
+                        disabled={task.pomodoros <= 1}
+                        onClick={() => removePomodoro(task.id)}
+                      />
+                      <IconButton
+                        icon="add"
+                        label="Add pomodoro"
+                        size="small"
+                        variant="success"
+                        disabled={task.pomodoros >= 4}
+                        onClick={() => addPomodoro(task.id)}
+                      />
+                    </>
                   )}
                   <div className={styles.pomodoroIcons}>
                     {[...Array(task.pomodoros)].map((_, i) => {
@@ -246,15 +261,6 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                       return <Icon key={i} size={16} />;
                     })}
                   </div>
-                  {!isMobile && task.pomodoros < 4 && (
-                    <IconButton
-                      icon="add"
-                      label="Add pomodoro"
-                      size="small"
-                      variant="success"
-                      onClick={() => addPomodoro(task.id)}
-                    />
-                  )}
                 </div>
               </div>
 
