@@ -38,6 +38,7 @@ beforeEach(() => {
     incrementCompletedPomodoros: vi.fn(),
     globalPomodoros: [],
     setGlobalPomodoros: vi.fn(),
+    skipCycle: vi.fn(),
   } satisfies PomodoroContextType);
 });
 
