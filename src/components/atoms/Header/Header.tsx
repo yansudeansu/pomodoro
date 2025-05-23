@@ -4,9 +4,10 @@ import styles from './Header.module.css';
 
 interface HeaderProps {
   onChartClick?: () => void;
+  onStatusClick?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onChartClick }) => (
+export const Header: React.FC<HeaderProps> = ({ onChartClick, onStatusClick }) => (
   <header className={styles.header}>
     <IconButton
       icon="chart"
@@ -15,8 +16,18 @@ export const Header: React.FC<HeaderProps> = ({ onChartClick }) => (
       size="medium"
       variant="link"
     />
+    {import.meta.env.VITE_STATUS_URL && (
+      <IconButton
+        icon="status"
+        label="Toggle Status View"
+        onClick={onStatusClick ?? (() => {})}
+        size="medium"
+        variant="link"
+      />
+    )}
     <Link
       href="https://github.com/yansudeansu/pomodoro"
+      title="View source on GitHub"
       external
       showIcon
       aria-label="View source on GitHub"

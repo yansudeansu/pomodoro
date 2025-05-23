@@ -17,6 +17,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   size = 'medium',
   variant = 'default',
   disabled = false,
+  ...rest
 }) => {
   const Icon = AppIcons[icon];
 
@@ -24,10 +25,14 @@ export const IconButton: React.FC<IconButtonProps> = ({
     <button
       className={`${styles.button} ${styles[size]} ${styles[variant]} ${disabled ? styles.disabled : ''}`}
       onClick={onClick}
+      title={label}
       aria-label={label}
       disabled={disabled}
+      {...rest}
     >
-      <Icon size={size === 'small' ? 16 : size === 'big' ? 24 : 20} />
+      <span className={styles.iconWrapper}>
+        <Icon size={size === 'small' ? 16 : size === 'big' ? 24 : 20} />
+      </span>
     </button>
   );
 };

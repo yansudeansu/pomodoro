@@ -35,3 +35,25 @@
   color: var(--text-color-long-break);
   background-color: var(--background-color-long-break);
 }
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+  white-space: nowrap;
+}
+
+.label {
+  margin-right: 0.5rem;
+  font-size: var(--font-size-sm);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+}

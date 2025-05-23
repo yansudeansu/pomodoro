@@ -585,15 +585,10 @@ describe('TaskList', () => {
     const moreBtn = await screen.findByLabelText(/more options/i);
     await user.click(moreBtn);
 
-    const modalTitle = await screen.findByText('Mobile Task');
+    const backdrop = await screen.findByTestId('modal-backdrop');
+    const modal = within(backdrop);
+    const modalTitle = modal.getByText('Mobile Task');
     expect(modalTitle).toBeInTheDocument();
-
-    const modalContent = modalTitle.closest(`.${styles.modalContent}`);
-    if (!(modalContent instanceof HTMLElement)) {
-      throw new Error('Modal content not found or not an HTMLElement');
-    }
-
-    const modal = within(modalContent);
 
     const addButton = modal.getByLabelText(/add pomodoro/i);
     await user.click(addButton);
@@ -608,7 +603,7 @@ describe('TaskList', () => {
 
     expect(onDeleteTask).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
 
-    expect(screen.queryByText('Mobile Task')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('modal-backdrop')).not.toBeInTheDocument();
 
     unmount();
   });
@@ -703,11 +698,12 @@ describe('TaskList', () => {
     const moreBtn = await screen.findByLabelText(/more options/i);
     await user.click(moreBtn);
 
-    const closeBtn = await screen.findByLabelText(/close/i);
+    const closeBtn = await screen.findByTestId('modal-close-button');
     await user.click(closeBtn);
 
     await waitFor(() => {
-      expect(screen.queryByText('Modal Close Test Task')).not.toBeInTheDocument();
+      const modalContent = document.querySelector(`.${styles.modalContent}`);
+      expect(modalContent).not.toBeInTheDocument();
     });
   });
 
@@ -754,7 +750,25 @@ describe('TaskList', () => {
     }
 
     await waitFor(() => {
-      expect(screen.queryByText('Overlay Close Task')).not.toBeInTheDocument();
+      const modalContent = document.querySelector(`.${styles.modalContent}`);
+      expect(modalContent).not.toBeInTheDocument();
     });
+  });
+
+  it('renders checkbox with accessible label', () => {
+    renderWithProvider(<TaskList onDeleteTask={() => {}} />, {
+      tasks: [
+        {
+          id: '1',
+          title: 'Label Test Task',
+          completed: false,
+          pomodoros: 1,
+          completedPomodoros: 0,
+        },
+      ],
+    });
+
+    const checkbox = screen.getByRole('checkbox', { name: 'Label Test Task' });
+    expect(checkbox).toBeInTheDocument();
   });
 });

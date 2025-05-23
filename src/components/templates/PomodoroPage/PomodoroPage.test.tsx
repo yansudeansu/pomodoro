@@ -454,4 +454,45 @@ describe('PomodoroPage', () => {
     await user.click(chartButton);
     expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();
   });
+
+  it('fetches and displays status history on status toggle', async () => {
+    vi.resetModules();
+    vi.doMock('../../../constants', () => ({
+      STATUS_URL: 'https://mocked-status-url.com',
+    }));
+
+    const { PomodoroPage } = await import('./PomodoroPage');
+    const mockHistory = [
+      { status: 'up', timestamp: '2024-01-01T12:00:00Z' },
+      { status: 'down', timestamp: '2024-01-01T12:05:00Z' },
+    ];
+
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockHistory),
+      } as Response)
+    );
+
+    vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
+      default: ({ history }: { history: typeof mockHistory }) => (
+        <div data-testid="status-history">{`entries: ${history.length}`}</div>
+      ),
+    }));
+
+    render(<PomodoroPage />);
+    const statusButton = screen.getByRole('button', { name: /status/i });
+    await userEvent.click(statusButton);
+
+    expect(global.fetch).toHaveBeenCalledWith('https://mocked-status-url.com');
+    expect(await screen.findByTestId('status-history')).toHaveTextContent('entries: 2');
+  });
+
+  it('does not show status button or fetch if STATUS_URL is not defined', () => {
+    vi.mock('../../../constants', () => ({
+      STATUS_URL: undefined,
+    }));
+
+    render(<PomodoroPage />);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
 });

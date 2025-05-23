@@ -15,6 +15,7 @@ import {
   BarChart3,
   MoreHorizontal,
   FastForward,
+  Activity,
 } from 'lucide-react';
 
 export const AppIcons = {
@@ -34,6 +35,7 @@ export const AppIcons = {
   chart: BarChart3,
   moreHorizontal: MoreHorizontal,
   skip: FastForward,
+  status: Activity,
 };
 
 export type IconName = keyof typeof AppIcons;

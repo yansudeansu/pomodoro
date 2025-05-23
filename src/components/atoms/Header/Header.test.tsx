@@ -33,13 +33,26 @@ describe('Header', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders without onChartClick and does not crash on click', async () => {
+  it('renders the status icon button and handles click', async () => {
     const user = userEvent.setup();
-    render(<Header />);
+    const onClick = vi.fn();
+    render(<Header onStatusClick={onClick} />);
 
-    const button = screen.getByRole('button', { name: /show weekly statistics/i });
+    const button = screen.getByRole('button', { name: /toggle status view/i });
     expect(button).toBeInTheDocument();
 
     await user.click(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders without any callbacks and does not crash on button clicks', async () => {
+    const user = userEvent.setup();
+    render(<Header />);
+
+    const chartBtn = screen.getByRole('button', { name: /show weekly statistics/i });
+    const statusBtn = screen.getByRole('button', { name: /toggle status view/i });
+
+    await user.click(chartBtn);
+    await user.click(statusBtn);
   });
 });

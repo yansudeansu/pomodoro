@@ -1,0 +1,19 @@
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: var(--spacing-sm);
+}
+
+.up {
+  background-color: var(--color-success);
+}
+
+.down {
+  background-color: var(--color-danger);
+}
+
+.unknown {
+  background-color: var(--color-muted);
+}
