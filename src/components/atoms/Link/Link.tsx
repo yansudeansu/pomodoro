@@ -15,6 +15,7 @@ export const Link: React.FC<LinkProps> = ({
   external = false,
   showIcon = false,
   className,
+  title,
   ...rest
 }) => {
   const LinkIcon = AppIcons.link;
@@ -25,6 +26,7 @@ export const Link: React.FC<LinkProps> = ({
       className={`${styles.link} ${className ?? ''}`}
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
+      title={title ?? (typeof children === 'string' ? children : undefined)}
       {...rest}
     >
       {children}

@@ -8,6 +8,11 @@
   justify-content: center;
   color: inherit;
   transition: opacity var(--transition-fast);
+  overflow: visible;
+}
+
+.iconWrapper {
+  display: inline-flex;
 }
 
 @media (hover: hover) {

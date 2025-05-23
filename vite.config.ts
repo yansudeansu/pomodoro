@@ -68,6 +68,7 @@ export default defineConfig({
         'src/App.tsx',
         '**/*.d.ts',
         'src/types/*',
+        'src/constants.ts',
       ],
     },
     exclude: ['**/*.stories.tsx', 'node_modules/**', 'build'],

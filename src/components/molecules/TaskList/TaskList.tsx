@@ -153,7 +153,13 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
               })}
             </div>
           </div>
-          <IconButton icon="close" label="Close" size="big" onClick={() => setActiveTaskId(null)} />
+          <IconButton
+            icon="close"
+            label="Close"
+            size="big"
+            data-testid="modal-close-button"
+            onClick={() => setActiveTaskId(null)}
+          />
         </div>
 
         <div className={styles.modalActions}>
@@ -217,6 +223,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
                 <div className={styles.taskContent}>
                   <Checkbox
                     id={checkboxId}
+                    label={task.title}
                     checked={task.completed}
                     onChange={() => toggleTask(task.id)}
                     mode={mode}
