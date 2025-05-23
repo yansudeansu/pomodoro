@@ -5,7 +5,7 @@ import { Checkbox } from './Checkbox';
 
 describe('Checkbox', () => {
   it('renders with the correct props', () => {
-    render(<Checkbox checked={true} onChange={() => {}} mode="pomodoro" />);
+    render(<Checkbox id="custom-id" checked={true} onChange={() => {}} mode="pomodoro" />);
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).toBeInTheDocument();
     expect(checkbox).toBeChecked();
@@ -15,7 +15,7 @@ describe('Checkbox', () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();
 
-    render(<Checkbox checked={false} onChange={handleChange} mode="short_break" />);
+    render(<Checkbox id="custom-id" checked={false} onChange={handleChange} mode="short_break" />);
     const checkbox = screen.getByRole('checkbox');
 
     await user.click(checkbox);
@@ -24,7 +24,7 @@ describe('Checkbox', () => {
   });
 
   it('applies the correct class based on mode', () => {
-    render(<Checkbox checked={false} onChange={() => {}} mode="long_break" />);
+    render(<Checkbox id="custom-id" checked={false} onChange={() => {}} mode="long_break" />);
     const checkbox = screen.getByRole('checkbox');
 
     expect(checkbox.className).toContain('checkbox');
@@ -36,5 +36,37 @@ describe('Checkbox', () => {
     const checkbox = screen.getByRole('checkbox');
 
     expect(checkbox).toHaveAttribute('id', 'custom-id');
+  });
+
+  it('hides the label visually when showLabel is false (default)', () => {
+    render(
+      <Checkbox
+        id="hidden-label"
+        checked={false}
+        onChange={() => {}}
+        mode="pomodoro"
+        label="Hidden Label"
+      />
+    );
+    const label = screen.getByLabelText('Hidden Label');
+    expect(label).toBeInTheDocument();
+    expect(label.tagName).toBe('INPUT');
+    const labelEl = document.querySelector('label[for="hidden-label"]')!;
+    expect(labelEl.className).toContain('visuallyHidden');
+  });
+
+  it('shows the label visually when showLabel is true', () => {
+    render(
+      <Checkbox
+        id="visible-label"
+        checked={false}
+        onChange={() => {}}
+        mode="pomodoro"
+        label="Visible Label"
+        showLabel={true}
+      />
+    );
+    const labelEl = document.querySelector('label[for="visible-label"]')!;
+    expect(labelEl.className).toContain('label');
   });
 });

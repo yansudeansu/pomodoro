@@ -57,4 +57,20 @@ describe('Link', () => {
     const icon = screen.queryByRole('img', { hidden: true });
     expect(icon).not.toBeInTheDocument();
   });
+
+  it('defaults title to children text if no title prop is provided and children is a string', () => {
+    render(<Link href="/default-title">Implicit Title</Link>);
+    const link = screen.getByRole('link', { name: 'Implicit Title' });
+    expect(link).toHaveAttribute('title', 'Implicit Title');
+  });
+
+  it('does not set title if children is not a string and no title prop is provided', () => {
+    render(
+      <Link href="/no-title">
+        <span>Nested Text</span>
+      </Link>
+    );
+    const link = screen.getByRole('link', { name: 'Nested Text' });
+    expect(link).not.toHaveAttribute('title');
+  });
 });

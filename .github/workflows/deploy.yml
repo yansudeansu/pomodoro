@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Inject environment variables
+        run: echo "VITE_STATUS_URL=${{ secrets.STATUS_URL }}" > .env
+
       - name: Build app
         run: yarn build
 

@@ -1,16 +1,19 @@
-import React, { useRef, useState, Suspense } from 'react';
+import React, { useRef, useState, Suspense, useEffect } from 'react';
 import styles from './PomodoroPage.module.css';
 import { Header } from '../../atoms/Header/Header';
 import { Toast, ToastProps } from '../../atoms/Toast/Toast';
 import { PomodorosToday } from '../../molecules/PomodorosToday/PomodorosToday';
 import { PomodoroTimer } from '../../organisms/PomodoroTimer/PomodoroTimer';
 import { TaskManager } from '../../organisms/TaskManager/TaskManager';
+import { StatusEntry } from '../../organisms/StatusHistory/StatusHistory';
 import { getWeeklySummary } from '../../../utils/dates';
 import { usePomodoroContext } from '../../../context/PomodoroContext';
+import { STATUS_URL } from '../../../constants';
 import { Task } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 
 const LazyWeeklyChart = React.lazy(() => import('../../molecules/WeeklyChart/WeeklyChart'));
+const LazyStatusHistory = React.lazy(() => import('../../organisms/StatusHistory/StatusHistory'));
 
 export const PomodoroPage: React.FC = () => {
   const { setTasks, mode, globalPomodoros } = usePomodoroContext();
@@ -19,6 +22,21 @@ export const PomodoroPage: React.FC = () => {
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deleteIndexRef = useRef<number>(-1);
   const [showChart, setShowChart] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
+  const [statusHistory, setStatusHistory] = useState<StatusEntry[] | null>(null);
+
+  useEffect(() => {
+    if (!STATUS_URL) return;
+
+    if (showStatus) {
+      fetch(STATUS_URL)
+        .then((res) => res.json())
+        .then(setStatusHistory)
+        .catch(() => setStatusHistory([]));
+    } else {
+      setStatusHistory(null);
+    }
+  }, [showStatus]);
 
   const handleAddTask = () => {
     const trimmed = inputValue.trim();
@@ -99,30 +117,55 @@ export const PomodoroPage: React.FC = () => {
   return (
     <>
       {toast && <Toast {...toast} />}
-      <Header onChartClick={() => setShowChart((prev) => !prev)} />
-      {showChart && (
+      <Header
+        onChartClick={() => setShowChart((prev) => !prev)}
+        onStatusClick={() => {
+          setShowStatus((prev) => {
+            if (!prev && STATUS_URL) {
+              fetch(STATUS_URL)
+                .then((res) => res.json())
+                .then(setStatusHistory)
+                .catch(() => setStatusHistory([]));
+            }
+            return !prev;
+          });
+        }}
+      />
+
+      {showStatus ? (
         <div className={styles.chartWrapper}>
-          <Suspense fallback={<div style={{ height: 200 }}>Loading chart...</div>}>
-            <LazyWeeklyChart
-              data={getWeeklySummary(globalPomodoros).map((d) => ({
-                name: d.date.toLocaleDateString(undefined, { weekday: 'short' }),
-                Pomodoros: d.count,
-              }))}
-            />
+          <Suspense fallback={<div>Loading status...</div>}>
+            {statusHistory && <LazyStatusHistory history={statusHistory} />}
           </Suspense>
         </div>
+      ) : (
+        <>
+          {showChart && (
+            <div className={styles.chartWrapper}>
+              <Suspense fallback={<div style={{ height: 200 }}>Loading chart...</div>}>
+                <LazyWeeklyChart
+                  data={getWeeklySummary(globalPomodoros).map((d) => ({
+                    name: d.date.toLocaleDateString(undefined, { weekday: 'short' }),
+                    Pomodoros: d.count,
+                  }))}
+                />
+              </Suspense>
+            </div>
+          )}
+
+          <main className={`${styles.page} ${styles[mode]}`}>
+            <PomodoroTimer />
+            <PomodorosToday />
+            <TaskManager
+              inputValue={inputValue}
+              onInputChange={(e) => setInputValue(e.target.value)}
+              onAddTask={handleAddTask}
+              onDeleteTask={handleDeleteTask}
+              onKeyDown={handleKeyDown}
+            />
+          </main>
+        </>
       )}
-      <main className={`${styles.page} ${styles[mode]}`}>
-        <PomodoroTimer />
-        <PomodorosToday />
-        <TaskManager
-          inputValue={inputValue}
-          onInputChange={(e) => setInputValue(e.target.value)}
-          onAddTask={handleAddTask}
-          onDeleteTask={handleDeleteTask}
-          onKeyDown={handleKeyDown}
-        />
-      </main>
     </>
   );
 };
