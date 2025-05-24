@@ -5,9 +5,10 @@ import styles from './Header.module.css';
 interface HeaderProps {
   onChartClick?: () => void;
   onStatusClick?: () => void;
+  isChartActive?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onChartClick, onStatusClick }) => (
+export const Header: React.FC<HeaderProps> = ({ onChartClick, onStatusClick, isChartActive }) => (
   <header className={styles.header}>
     <IconButton
       icon="chart"
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({ onChartClick, onStatusClick }) =
       onClick={onChartClick ?? (() => {})}
       size="medium"
       variant="link"
+      active={isChartActive}
     />
     {import.meta.env.VITE_STATUS_URL && (
       <IconButton

@@ -8,6 +8,7 @@ export interface IconButtonProps {
   size?: 'small' | 'medium' | 'big';
   variant?: 'default' | 'success' | 'danger' | 'link';
   disabled?: boolean;
+  active?: boolean;
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({
@@ -17,13 +18,14 @@ export const IconButton: React.FC<IconButtonProps> = ({
   size = 'medium',
   variant = 'default',
   disabled = false,
+  active = false,
   ...rest
 }) => {
   const Icon = AppIcons[icon];
 
   return (
     <button
-      className={`${styles.button} ${styles[size]} ${styles[variant]} ${disabled ? styles.disabled : ''}`}
+      className={`${styles.button} ${styles[size]} ${styles[variant]} ${disabled ? styles.disabled : ''} ${active ? styles.active : ''}`}
       onClick={onClick}
       title={label}
       aria-label={label}
