@@ -292,7 +292,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
         );
       })}
 
-      <Modal isOpen={!!activeTaskId} onClose={() => setActiveTaskId(null)}>
+      <Modal isOpen={!!activeTaskId} onClose={() => setActiveTaskId(null)} position="bottom">
         {renderModalContent()}
       </Modal>
     </div>

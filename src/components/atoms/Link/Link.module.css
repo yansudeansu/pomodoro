@@ -8,11 +8,13 @@
   font-family: var(--font-family-base);
 }
 
-.link:hover {
-  color: var(--color-text);
-  text-decoration: underline;
-}
-
 .icon {
   flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
 }
