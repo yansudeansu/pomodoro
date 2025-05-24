@@ -133,6 +133,7 @@ export const PomodoroPage: React.FC = () => {
             return !prev;
           });
         }}
+        isChartActive={showChart}
       />
 
       {showChart && (
