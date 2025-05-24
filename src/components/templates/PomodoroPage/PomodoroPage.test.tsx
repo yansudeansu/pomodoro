@@ -5,6 +5,7 @@ import { PomodoroPage } from './PomodoroPage';
 import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext';
 import { Task } from '../../../types';
 import { ToastProps } from '../../atoms/Toast/Toast';
+import { StatusEntry } from '../../organisms/StatusHistory/StatusHistory';
 
 let latestToastMessage = '';
 
@@ -41,6 +42,15 @@ vi.mock('../../atoms/Toast/Toast', () => ({
 
 vi.mock('../../molecules/WeeklyChart/WeeklyChart', () => ({
   default: () => <div data-testid="weekly-chart">Mocked Chart</div>,
+}));
+
+vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
+  default: ({ history, onClose }: { history: StatusEntry[]; onClose: () => void }) => (
+    <div data-testid="status-history">
+      entries: {history.length}
+      <button onClick={onClose}>Close Status Modal</button>
+    </div>
+  ),
 }));
 
 const mockedUsePomodoroContext = vi.mocked(usePomodoroContext);
@@ -494,5 +504,40 @@ describe('PomodoroPage', () => {
 
     render(<PomodoroPage />);
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('closes status modal when close button is clicked', async () => {
+    const mockHistory = [
+      { status: 'up', timestamp: '2024-01-01T12:00:00Z' },
+      { status: 'down', timestamp: '2024-01-01T12:05:00Z' },
+    ];
+
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockHistory),
+      } as Response)
+    );
+
+    vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
+      default: ({ history, onClose }: { history: typeof mockHistory; onClose: () => void }) => (
+        <div data-testid="status-history">
+          entries: {history.length}
+          <button onClick={onClose}>Close Status Modal</button>
+        </div>
+      ),
+    }));
+
+    const { PomodoroPage } = await import('./PomodoroPage');
+    render(<PomodoroPage />);
+
+    const statusButton = screen.getByRole('button', { name: /toggle status view/i });
+    await userEvent.click(statusButton);
+
+    await screen.findByText(/entries: 2/);
+
+    const closeButton = screen.getByRole('button', { name: /close status modal/i });
+    await userEvent.click(closeButton);
+
+    expect(screen.queryByText(/entries: 2/)).not.toBeInTheDocument();
   });
 });

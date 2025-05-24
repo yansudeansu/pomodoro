@@ -10,3 +10,7 @@
   margin: 0 var(--spacing-sm);
   white-space: nowrap;
 }
+
+.bar .label:first-of-type {
+  margin-left: 0;
+}

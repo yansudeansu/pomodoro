@@ -12,15 +12,17 @@ afterAll(() => {
   vi.useRealTimers();
 });
 
+const mockOnClose = vi.fn();
+
 describe('StatusHistory', () => {
   it('renders nothing when history is empty', () => {
-    const { container } = render(<StatusHistory history={[]} />);
+    const { container } = render(<StatusHistory history={[]} onClose={mockOnClose} />);
     expect(container.firstChild).toBeNull();
   });
 
   it('displays the correct heading', () => {
     const history: StatusEntry[] = [{ status: 'up', timestamp: '2024-01-01T11:59:00Z' }];
-    render(<StatusHistory history={history} />);
+    render(<StatusHistory history={history} onClose={mockOnClose} />);
     expect(screen.getByText(/Pomodoro App Status/i)).toBeInTheDocument();
   });
 
@@ -29,7 +31,7 @@ describe('StatusHistory', () => {
       { status: 'up', timestamp: '2024-01-01T11:59:00Z' },
       { status: 'up', timestamp: '2024-01-01T11:58:00Z' },
     ];
-    render(<StatusHistory history={history} />);
+    render(<StatusHistory history={history} onClose={mockOnClose} />);
     expect(screen.getByText('100% uptime (last hour)')).toBeInTheDocument();
     expect(screen.getByTestId('status-dot-up')).toBeInTheDocument();
   });
@@ -39,7 +41,7 @@ describe('StatusHistory', () => {
       { status: 'down', timestamp: '2024-01-01T11:59:00Z' },
       { status: 'down', timestamp: '2024-01-01T11:58:00Z' },
     ];
-    render(<StatusHistory history={history} />);
+    render(<StatusHistory history={history} onClose={mockOnClose} />);
     expect(screen.getByText('0% uptime (last hour)')).toBeInTheDocument();
     expect(screen.getByTestId('status-dot-down')).toBeInTheDocument();
   });
@@ -49,15 +51,19 @@ describe('StatusHistory', () => {
       { status: 'up', timestamp: '2024-01-01T11:59:00Z' },
       { status: 'down', timestamp: '2024-01-01T11:58:00Z' },
     ];
-    render(<StatusHistory history={history} />);
+    render(<StatusHistory history={history} onClose={mockOnClose} />);
     expect(screen.getByText('50% uptime (last hour)')).toBeInTheDocument();
     expect(screen.getByTestId('status-dot-unknown')).toBeInTheDocument();
   });
 
   it('shows the correct last checked time', () => {
     const history: StatusEntry[] = [{ status: 'up', timestamp: '2024-01-01T11:45:00Z' }];
-    render(<StatusHistory history={history} />);
-    const time = new Date('2024-01-01T11:45:00Z').toLocaleTimeString();
+    render(<StatusHistory history={history} onClose={mockOnClose} />);
+    const time = new Date('2024-01-01T11:45:00Z').toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
     expect(screen.getByText(`Last checked: ${time}`)).toBeInTheDocument();
   });
 });

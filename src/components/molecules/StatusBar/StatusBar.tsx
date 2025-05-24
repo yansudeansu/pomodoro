@@ -14,8 +14,16 @@ export const StatusBar: React.FC<StatusBarProps> = ({ history }) => {
         {Math.round((Date.now() - new Date(first.timestamp).getTime()) / 60000)}m ago
       </span>
 
-      {history.map((entry, index) => (
-        <StatusBarItem key={index} status={entry.status} />
+      {[...history].reverse().map((entry, index) => (
+        <StatusBarItem
+          key={index}
+          status={entry.status}
+          title={new Date(entry.timestamp).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })}
+        />
       ))}
 
       <span className={styles.label}>Now</span>

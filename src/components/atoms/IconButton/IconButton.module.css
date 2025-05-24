@@ -15,12 +15,6 @@
   display: inline-flex;
 }
 
-@media (hover: hover) {
-  .button:hover {
-    opacity: 0.7;
-  }
-}
-
 .small {
   font-size: var(--font-size-sm);
 }
@@ -46,8 +40,21 @@
   transition: color var(--transition-fast);
 }
 
-.link:hover {
-  color: var(--color-white);
+.disabled {
+  opacity: 0.15;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+@media (hover: hover) {
+  .button:hover {
+    opacity: 0.7;
+  }
+
+  .link:hover {
+    color: var(--color-white);
+  }
 }
 
 .disabled {
