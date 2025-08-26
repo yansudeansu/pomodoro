@@ -10,6 +10,7 @@ import { usePomodoroContext } from '../../../context/PomodoroContext';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { Task, UIOnlyTask } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
+import { isSameDay } from '../../../utils/dates';
 import styles from './TaskList.module.css';
 
 interface TaskListProps {
@@ -75,10 +76,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onDeleteTask }) => {
 
         return remaining.filter((entry) => {
           const entryDate = new Date(entry.completedAt);
-          const isToday =
-            entryDate.getFullYear() === today.getFullYear() &&
-            entryDate.getMonth() === today.getMonth() &&
-            entryDate.getDate() === today.getDate();
+          const isToday = isSameDay(entryDate, today);
 
           const isFromThisTask = entry.taskId === id;
 

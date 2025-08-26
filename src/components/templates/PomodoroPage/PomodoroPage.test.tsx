@@ -4,10 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { PomodoroPage } from './PomodoroPage';
 import { usePomodoroContext, PomodoroContextType } from '../../../context/PomodoroContext';
 import { Task } from '../../../types';
-import { ToastProps } from '../../atoms/Toast/Toast';
 import { StatusEntry } from '../../organisms/StatusHistory/StatusHistory';
-
-let latestToastMessage = '';
+import { useStatusHistory } from '../../../hooks/useStatusHistory';
 
 vi.mock('../../../context/PomodoroContext', async () => {
   const actual = await vi.importActual<typeof import('../../../context/PomodoroContext')>(
@@ -27,19 +25,6 @@ vi.mock('../../organisms/PomodoroTimer/PomodoroTimer', () => ({
   PomodoroTimer: () => <div data-testid="pomodoro-timer" />,
 }));
 
-vi.mock('../../atoms/Toast/Toast', () => ({
-  Toast: ({ message, actionLabel, onAction, onClose }: ToastProps) => {
-    latestToastMessage = message;
-    return (
-      <div data-testid="toast">
-        <span>{message}</span>
-        {actionLabel && <button onClick={onAction}>{actionLabel}</button>}
-        {onClose && <button onClick={onClose}>Close toast</button>}
-      </div>
-    );
-  },
-}));
-
 vi.mock('../../molecules/WeeklyChart/WeeklyChart', () => ({
   default: () => <div data-testid="weekly-chart">Mocked Chart</div>,
 }));
@@ -53,9 +38,21 @@ vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
   ),
 }));
 
+vi.mock('../../../hooks/useStatusHistory', async () => {
+  const actual = await vi.importActual<typeof import('../../../hooks/useStatusHistory')>(
+    '../../../hooks/useStatusHistory'
+  );
+  return {
+    ...actual,
+    useStatusHistory: vi.fn(),
+  };
+});
+
 const mockedUsePomodoroContext = vi.mocked(usePomodoroContext);
 
 const mockSetTasks = vi.fn();
+
+const mockedUseStatusHistory = vi.mocked(useStatusHistory);
 
 const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroContextType => ({
   mode: 'pomodoro',
@@ -81,6 +78,12 @@ const createMockContext = (overrides: Partial<PomodoroContextType>): PomodoroCon
 beforeEach(() => {
   vi.clearAllMocks();
   mockedUsePomodoroContext.mockReturnValue(createMockContext({ mode: 'pomodoro' }));
+  mockedUseStatusHistory.mockReturnValue({
+    showStatus: false,
+    statusHistory: [],
+    handleStatusClick: vi.fn(),
+    handleCloseStatusModal: vi.fn(),
+  });
 });
 
 describe('PomodoroPage', () => {
@@ -295,159 +298,6 @@ describe('PomodoroPage', () => {
     expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('shows toast if more than 16 tasks are added', async () => {
-    const user = userEvent.setup();
-
-    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
-      id: `${i}`,
-      title: `Task ${i}`,
-      completed: false,
-      pomodoros: 1,
-      completedPomodoros: 0,
-    }));
-
-    let currentTasks = [...mockTasks];
-
-    mockedUsePomodoroContext.mockReturnValue(
-      createMockContext({
-        tasks: currentTasks,
-        setTasks: (updater) => {
-          const updated = typeof updater === 'function' ? updater(currentTasks) : updater;
-          currentTasks = updated;
-        },
-      })
-    );
-
-    render(<PomodoroPage />);
-
-    const input = screen.getByPlaceholderText(/add a new task/i);
-    await user.type(input, 'Extra Task');
-    await user.click(screen.getByTestId('add-task-button'));
-
-    expect(await screen.findByTestId('toast')).toHaveTextContent(/10–16 Pomodoros/);
-  });
-
-  it('auto-dismisses the 17+ tasks toast without delay (mocked timeout)', async () => {
-    const setTimeoutMock = vi
-      .spyOn(global, 'setTimeout')
-      .mockImplementation((fn: () => void): ReturnType<typeof setTimeout> => {
-        fn();
-        return 0 as unknown as ReturnType<typeof setTimeout>;
-      });
-    const clearTimeoutMock = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
-
-    const user = userEvent.setup();
-
-    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
-      id: `${i}`,
-      title: `Task ${i}`,
-      completed: false,
-      pomodoros: 1,
-      completedPomodoros: 0,
-    }));
-
-    let currentTasks = [...mockTasks];
-
-    mockedUsePomodoroContext.mockReturnValue(
-      createMockContext({
-        tasks: currentTasks,
-        setTasks: (updater) => {
-          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
-        },
-      })
-    );
-
-    render(<PomodoroPage />);
-
-    const input = screen.getByPlaceholderText(/add a new task/i);
-    await user.type(input, 'Extra Task');
-    await user.click(screen.getByTestId('add-task-button'));
-
-    expect(latestToastMessage).toMatch(/10–16 Pomodoros/);
-
-    await Promise.resolve();
-
-    expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
-
-    setTimeoutMock.mockRestore();
-    clearTimeoutMock.mockRestore();
-  });
-
-  it('closes the 17+ tasks toast when close button is clicked', async () => {
-    const user = userEvent.setup();
-
-    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
-      id: `${i}`,
-      title: `Task ${i}`,
-      completed: false,
-      pomodoros: 1,
-      completedPomodoros: 0,
-    }));
-
-    let currentTasks = [...mockTasks];
-
-    mockedUsePomodoroContext.mockReturnValue(
-      createMockContext({
-        tasks: currentTasks,
-        setTasks: (updater) => {
-          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
-        },
-      })
-    );
-
-    render(<PomodoroPage />);
-
-    const input = screen.getByPlaceholderText(/add a new task/i);
-    await user.type(input, 'Extra Task');
-    await user.click(screen.getByTestId('add-task-button'));
-
-    const toast = await screen.findByTestId('toast');
-    expect(toast).toHaveTextContent(/10–16 Pomodoros/);
-
-    const closeButton = screen.getByRole('button', { name: /close toast/i });
-    await user.click(closeButton);
-
-    expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
-  });
-
-  it('clears the previous toast timeout when showing a new 17+ tasks toast', async () => {
-    const user = userEvent.setup();
-    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout').mockImplementation(() => {});
-
-    const mockTasks = Array.from({ length: 16 }, (_, i) => ({
-      id: `${i}`,
-      title: `Task ${i}`,
-      completed: false,
-      pomodoros: 1,
-      completedPomodoros: 0,
-    }));
-
-    let currentTasks = [...mockTasks];
-
-    mockedUsePomodoroContext.mockReturnValue(
-      createMockContext({
-        tasks: currentTasks,
-        setTasks: (updater) => {
-          currentTasks = typeof updater === 'function' ? updater(currentTasks) : updater;
-        },
-      })
-    );
-
-    render(<PomodoroPage />);
-
-    const input = screen.getByPlaceholderText(/add a new task/i);
-
-    await user.type(input, 'Extra Task 1');
-    await user.click(screen.getByTestId('add-task-button'));
-
-    await user.type(input, 'Extra Task 2');
-    await user.click(screen.getByTestId('add-task-button'));
-
-    expect(clearTimeoutSpy).toHaveBeenCalled();
-
-    clearTimeoutSpy.mockRestore();
-  });
-
   it('toggles the WeeklyChart visibility when the chart button is clicked', async () => {
     const user = userEvent.setup();
 
@@ -465,79 +315,50 @@ describe('PomodoroPage', () => {
     expect(screen.queryByTestId('weekly-chart')).not.toBeInTheDocument();
   });
 
-  it('fetches and displays status history on status toggle', async () => {
-    vi.resetModules();
-    vi.doMock('../../../constants', () => ({
-      STATUS_URL: 'https://mocked-status-url.com',
-    }));
-
-    const { PomodoroPage } = await import('./PomodoroPage');
-    const mockHistory = [
-      { status: 'up', timestamp: '2024-01-01T12:00:00Z' },
-      { status: 'down', timestamp: '2024-01-01T12:05:00Z' },
-    ];
-
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockHistory),
-      } as Response)
-    );
-
-    vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
-      default: ({ history }: { history: typeof mockHistory }) => (
-        <div data-testid="status-history">{`entries: ${history.length}`}</div>
-      ),
-    }));
+  it('does not render the status modal when showStatus=false', () => {
+    mockedUseStatusHistory.mockReturnValue({
+      showStatus: false,
+      statusHistory: [],
+      handleStatusClick: vi.fn(),
+      handleCloseStatusModal: vi.fn(),
+    });
 
     render(<PomodoroPage />);
-    const statusButton = screen.getByRole('button', { name: /status/i });
-    await userEvent.click(statusButton);
 
-    expect(global.fetch).toHaveBeenCalledWith('https://mocked-status-url.com');
-    expect(await screen.findByTestId('status-history')).toHaveTextContent('entries: 2');
+    expect(screen.queryByTestId('status-history')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('status-loading')).not.toBeInTheDocument();
   });
 
-  it('does not show status button or fetch if STATUS_URL is not defined', () => {
-    vi.mock('../../../constants', () => ({
-      STATUS_URL: undefined,
-    }));
+  it('renders the status modal with history and closes via onClose', async () => {
+    const onClose = vi.fn();
+    mockedUseStatusHistory.mockReturnValue({
+      showStatus: true,
+      statusHistory: [{ timestamp: '2025-08-14T12:00:00.000Z', status: 'up' }],
+      handleStatusClick: vi.fn(),
+      handleCloseStatusModal: onClose,
+    });
 
     render(<PomodoroPage />);
-    expect(global.fetch).not.toHaveBeenCalled();
+
+    const panel = await screen.findByTestId('status-history');
+    expect(panel).toHaveTextContent('entries: 1');
+
+    await userEvent.click(screen.getByRole('button', { name: /close status modal/i }));
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('closes status modal when close button is clicked', async () => {
-    const mockHistory = [
-      { status: 'up', timestamp: '2024-01-01T12:00:00Z' },
-      { status: 'down', timestamp: '2024-01-01T12:05:00Z' },
-    ];
+  it('renders the status modal with empty history when statusHistory is null', async () => {
+    const onClose = vi.fn();
+    mockedUseStatusHistory.mockReturnValue({
+      showStatus: true,
+      statusHistory: null,
+      handleStatusClick: vi.fn(),
+      handleCloseStatusModal: onClose,
+    });
 
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockHistory),
-      } as Response)
-    );
-
-    vi.mock('../../organisms/StatusHistory/StatusHistory', () => ({
-      default: ({ history, onClose }: { history: typeof mockHistory; onClose: () => void }) => (
-        <div data-testid="status-history">
-          entries: {history.length}
-          <button onClick={onClose}>Close Status Modal</button>
-        </div>
-      ),
-    }));
-
-    const { PomodoroPage } = await import('./PomodoroPage');
     render(<PomodoroPage />);
 
-    const statusButton = screen.getByRole('button', { name: /toggle status view/i });
-    await userEvent.click(statusButton);
-
-    await screen.findByText(/entries: 2/);
-
-    const closeButton = screen.getByRole('button', { name: /close status modal/i });
-    await userEvent.click(closeButton);
-
-    expect(screen.queryByText(/entries: 2/)).not.toBeInTheDocument();
+    const panel = await screen.findByTestId('status-history');
+    expect(panel).toHaveTextContent('entries: 0');
   });
 });
