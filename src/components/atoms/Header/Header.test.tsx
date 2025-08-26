@@ -1,9 +1,17 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Header } from './Header';
 
 describe('Header', () => {
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('renders a link to the GitHub repository', () => {
     render(<Header />);
     const link = screen.getByRole('link', { name: /github/i });
@@ -33,7 +41,8 @@ describe('Header', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders the status icon button and handles click', async () => {
+  it('renders the status icon button when VITE_STATUS_URL is set and handles click', async () => {
+    import.meta.env.VITE_STATUS_URL = 'https://api.example.com/status';
     const user = userEvent.setup();
     const onClick = vi.fn();
     render(<Header onStatusClick={onClick} />);
@@ -45,7 +54,15 @@ describe('Header', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders without any callbacks and does not crash on button clicks', async () => {
+  it('does not render the status icon button when VITE_STATUS_URL is not set', () => {
+    vi.stubEnv('VITE_STATUS_URL', '');
+    render(<Header onStatusClick={vi.fn()} />);
+
+    expect(screen.queryByRole('button', { name: /toggle status view/i })).not.toBeInTheDocument();
+  });
+
+  it('renders without any callbacks and does not crash on button clicks when status URL is set', async () => {
+    import.meta.env.VITE_STATUS_URL = 'https://api.example.com/status';
     const user = userEvent.setup();
     render(<Header />);
 
@@ -54,5 +71,16 @@ describe('Header', () => {
 
     await user.click(chartBtn);
     await user.click(statusBtn);
+  });
+
+  it('renders without any callbacks and does not crash on button clicks when status URL is not set', async () => {
+    vi.stubEnv('VITE_STATUS_URL', '');
+    const user = userEvent.setup();
+    render(<Header />);
+
+    const chartBtn = screen.getByRole('button', { name: /show weekly statistics/i });
+    await user.click(chartBtn);
+
+    expect(screen.queryByRole('button', { name: /toggle status view/i })).not.toBeInTheDocument();
   });
 });
